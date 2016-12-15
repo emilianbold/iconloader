@@ -39,7 +39,6 @@ public final class IconLoader {
   private static boolean USE_DARK_ICONS = UIUtil.isUnderDarcula();
 
   private static float SCALE = JBUI.scale(1f);
-  private static ImageFilter IMAGE_FILTER;
 
   private static final ImageIcon EMPTY_ICON = new ImageIcon(UIUtil.createImage(1, 1, BufferedImage.TYPE_3BYTE_BGR)) {
     @NonNls
@@ -66,15 +65,6 @@ public final class IconLoader {
   public static void setScale(float scale) {
     if (scale != SCALE) {
       SCALE = scale;
-    }
-  }
-
-  public static void setFilter(ImageFilter filter) {
-    if (!Registry.is("color.blindness.icon.filter")) {
-      filter = null;
-    }
-    if (IMAGE_FILTER != filter) {
-      IMAGE_FILTER = filter;
     }
   }
 
@@ -247,7 +237,7 @@ public final class IconLoader {
 
   /**
    * Gets a snapshot of the icon, immune to changes made by these calls:
-   * {@link IconLoader#setScale(float)}, {@link IconLoader#setFilter(ImageFilter)}, {@link IconLoader#setUseDarkIcons(boolean)}
+   * {@link IconLoader#setScale(float)}, {@link IconLoader#setUseDarkIcons(boolean)}
    *
    * @param icon the source icon
    * @return the icon snapshot
@@ -277,18 +267,16 @@ public final class IconLoader {
       myUrl = url;
       dark = USE_DARK_ICONS;
       scale = SCALE;
-      filter = IMAGE_FILTER;
     }
 
     @NotNull
     private synchronized ImageIcon getRealIcon() {
-      if (isLoaderDisabled() && (myRealIcon == null || dark != USE_DARK_ICONS || scale != SCALE || filter != IMAGE_FILTER)) return EMPTY_ICON;
+      if (isLoaderDisabled() && (myRealIcon == null || dark != USE_DARK_ICONS || scale != SCALE)) return EMPTY_ICON;
 
       if (!isValid()) {
         myRealIcon = null;
         dark = USE_DARK_ICONS;
         scale = SCALE;
-        filter = IMAGE_FILTER;
       }
       Object realIcon = myRealIcon;
       if (realIcon instanceof Icon) return (ImageIcon)realIcon;
@@ -316,7 +304,7 @@ public final class IconLoader {
     }
 
     private boolean isValid() {
-      return dark == USE_DARK_ICONS && scale == SCALE && filter == IMAGE_FILTER;
+      return dark == USE_DARK_ICONS && scale == SCALE;
     }
 
     @Override
@@ -387,7 +375,6 @@ public final class IconLoader {
     private boolean isDarkVariant = USE_DARK_ICONS;
     private float scale = SCALE;
 //    private int numberOfPatchers = 0;
-    private ImageFilter filter = IMAGE_FILTER;
 
     @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -410,10 +397,9 @@ public final class IconLoader {
     }
 
     protected final synchronized Icon getOrComputeIcon() {
-      if (!myWasComputed || isDarkVariant != USE_DARK_ICONS || scale != SCALE || filter != IMAGE_FILTER /*|| numberOfPatchers != ourPatchers.size()*/) {
+      if (!myWasComputed || isDarkVariant != USE_DARK_ICONS || scale != SCALE) {
         isDarkVariant = USE_DARK_ICONS;
         scale = SCALE;
-        filter = IMAGE_FILTER;
         myWasComputed = true;
 //        numberOfPatchers = ourPatchers.size();
         myIcon = compute();
