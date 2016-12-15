@@ -16,7 +16,6 @@
 
 package com.bulenkov.iconloader.util;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
@@ -64,14 +63,6 @@ public class AsyncByteArrayOutputStream extends OutputStream {
 
     System.arraycopy(b, off, myBuffer, myCount, len);
     myCount = count;
-  }
-
-  public void writeTo(OutputStream out) throws IOException {
-    out.write(myBuffer, 0, myCount);
-  }
-
-  public void reset() {
-    myCount = 0;
   }
 
   public byte[] toByteArray() {

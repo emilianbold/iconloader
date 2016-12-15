@@ -307,12 +307,7 @@ public final class IconLoader {
   }
 
   public static Icon getTransparentIcon(@NotNull final Icon icon, final float alpha) {
-    return new RetrievableIcon() {
-      @Nullable
-      @Override
-      public Icon retrieveIcon() {
-        return icon;
-      }
+    return new Icon() {
 
       @Override
       public int getIconHeight() {
@@ -350,7 +345,7 @@ public final class IconLoader {
     return icon;
   }
 
-  public static final class CachedImageIcon implements ScalableIcon {
+  public static final class CachedImageIcon implements Icon {
     private volatile Object myRealIcon;
     public String myOriginalPath;
     private ClassLoader myClassLoader;
@@ -430,7 +425,6 @@ public final class IconLoader {
       return myUrl.toString();
     }
 
-    @Override
     public Icon scale(float scaleFactor) {
       if (scaleFactor == 1f) {
         return this;

@@ -19,10 +19,8 @@ package com.bulenkov.iconloader.util;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -103,26 +101,6 @@ public class StringUtil {
     return -1;
   }
 
-
-  public static int indexOfIgnoreCase(String where, char what, int fromIndex) {
-    int sourceCount = where.length();
-
-    if (fromIndex >= sourceCount) {
-      return -1;
-    }
-
-    if (fromIndex < 0) {
-      fromIndex = 0;
-    }
-
-    for (int i = fromIndex; i < sourceCount; i++) {
-      if (charsEqualIgnoreCase(where.charAt(i), what)) {
-        return i;
-      }
-    }
-
-    return -1;
-  }
 
   public static boolean containsIgnoreCase(String where, String what) {
     return indexOfIgnoreCase(where, what, 0) >= 0;
@@ -210,54 +188,6 @@ public class StringUtil {
     return s != null && s.length() != 0 && s.charAt(s.length() - 1) == suffix;
   }
 
-
-  public static String stripQuotesAroundValue(String text) {
-    if (startsWithChar(text, '\"') || startsWithChar(text, '\'')) text = text.substring(1);
-    if (endsWithChar(text, '\"') || endsWithChar(text, '\'')) text = text.substring(0, text.length() - 1);
-    return text;
-  }
-
-  /**
-   * Equivalent to string.startsWith(prefixes[0] + prefixes[1] + ...) but avoids creating an object for concatenation.
-   */
-  public static boolean startsWithConcatenation(String string, String... prefixes) {
-    int offset = 0;
-    for (String prefix : prefixes) {
-      int prefixLen = prefix.length();
-      if (!string.regionMatches(offset, prefix, 0, prefixLen)) {
-        return false;
-      }
-      offset += prefixLen;
-    }
-    return true;
-  }
-
-  public static String getFileExtension(String fileName) {
-    int index = fileName.lastIndexOf('.');
-    if (index < 0) return "";
-    return fileName.substring(index + 1);
-  }
-
-  public static String getFileNameWithoutExtension(String name) {
-    int i = name.lastIndexOf('.');
-    if (i != -1) {
-      name = name.substring(0, i);
-    }
-    return name;
-
-  }
-
-  @NotNull
-  @Contract(pure = true)
-  public static String join(@NotNull Collection<String> strings, @NotNull String separator) {
-    if (strings.size() <= 1) {
-      return notNullize(getFirstItem(strings));
-    }
-    StringBuilder result = new StringBuilder();
-    join(strings, separator, result);
-    return result.toString();
-  }
-
   @Contract(pure = true)
   public static String join(@NotNull Iterable<?> items, @NotNull @NonNls String separator) {
     StringBuilder result = new StringBuilder();
@@ -268,37 +198,6 @@ public class StringUtil {
       result.setLength(result.length() - separator.length());
     }
     return result.toString();
-  }
-
-
-  @NotNull
-  public static String notNullize(@Nullable final String s) {
-    return notNullize(s, "");
-  }
-
-  @NotNull
-  public static String notNullize(@Nullable final String s, @NotNull String defaultValue) {
-    return s == null ? defaultValue : s;
-  }
-
-  public static void join(@NotNull Collection<String> strings, @NotNull String separator, @NotNull StringBuilder result) {
-    boolean isFirst = true;
-    for (String string : strings) {
-      if (string != null) {
-        if (isFirst) {
-          isFirst = false;
-        }
-        else {
-          result.append(separator);
-        }
-        result.append(string);
-      }
-    }
-  }
-
-  @Nullable
-  public static <T> T getFirstItem(@Nullable Collection<T> items) {
-    return items == null || items.isEmpty() ? null : items.iterator().next();
   }
 
 }

@@ -35,100 +35,17 @@ public class UIUtil {
   private static volatile Pair<String, Integer> ourSystemFontData;
   public static final float DEF_SYSTEM_FONT_SIZE = 12f; // TODO: consider 12 * 1.33 to compensate JDK's 72dpi font scale
 
-  public static <T extends JComponent> T findComponentOfType(JComponent parent, Class<T> cls) {
-    if (parent == null || cls.isAssignableFrom(parent.getClass())) {
-      @SuppressWarnings({"unchecked"}) final T t = (T) parent;
-      return t;
-    }
-    for (Component component : parent.getComponents()) {
-      if (component instanceof JComponent) {
-        T comp = findComponentOfType((JComponent) component, cls);
-        if (comp != null) return comp;
-      }
-    }
-    return null;
-  }
-
   @Nullable
   public static Pair<String, Integer> getSystemFontData() {
     return ourSystemFontData;
-  }
-
-  public static <T> T getParentOfType(Class<? extends T> cls, Component c) {
-    Component eachParent = c;
-    while (eachParent != null) {
-      if (cls.isAssignableFrom(eachParent.getClass())) {
-        @SuppressWarnings({"unchecked"}) final T t = (T) eachParent;
-        return t;
-      }
-
-      eachParent = eachParent.getParent();
-    }
-
-    return null;
   }
 
   public static boolean isAppleRetina() {
     return isRetina() && SystemInfo.isAppleJvm;
   }
 
-  public static Color getControlColor() {
-    return UIManager.getColor("control");
-  }
-
-  public static Color getPanelBackground() {
-    return UIManager.getColor("Panel.background");
-  }
-
   public static boolean isUnderDarcula() {
     return UIManager.getLookAndFeel().getName().equals("Darcula");
-  }
-
-  public static Color getListBackground() {
-    return UIManager.getColor("List.background");
-  }
-
-  public static Color getListForeground() {
-    return UIManager.getColor("List.foreground");
-  }
-
-  public static Color getLabelForeground() {
-    return UIManager.getColor("Label.foreground");
-  }
-
-  public static Color getTextFieldBackground() {
-    return UIManager.getColor("TextField.background");
-  }
-
-  public static Color getTreeSelectionForeground() {
-    return UIManager.getColor("Tree.selectionForeground");
-  }
-
-  public static Color getTreeForeground() {
-    return UIManager.getColor("Tree.foreground");
-  }
-
-  private static final Color DECORATED_ROW_BG_COLOR = new DoubleColor(new Color(242, 245, 249), new Color(65, 69, 71));
-
-  public static Color getDecoratedRowColor() {
-    return DECORATED_ROW_BG_COLOR;
-  }
-
-  public static Color getTreeSelectionBackground(boolean focused) {
-    return focused ? getTreeSelectionBackground() : getTreeUnfocusedSelectionBackground();
-  }
-
-  private static Color getTreeSelectionBackground() {
-    return UIManager.getColor("Tree.selectionBackground");
-  }
-
-  public static Color getTreeUnfocusedSelectionBackground() {
-    Color background = getTreeTextBackground();
-    return ColorUtil.isDark(background) ? new DoubleColor(Gray._30, new Color(13, 41, 62)) : Gray._212;
-  }
-
-  public static Color getTreeTextBackground() {
-    return UIManager.getColor("Tree.textBackground");
   }
 
   public static void drawImage(Graphics g, Image image, int x, int y, ImageObserver observer) {
@@ -202,20 +119,6 @@ public class UIUtil {
   public static Font getLabelFont() {
     return UIManager.getFont("Label.font");
   }
-
-  public static float getFontSize(FontSize size) {
-    int defSize = getLabelFont().getSize();
-    switch (size) {
-      case SMALL:
-        return Math.max(defSize - JBUI.scale(2f), JBUI.scale(11f));
-      case MINI:
-        return Math.max(defSize - JBUI.scale(4f), JBUI.scale(9f));
-      default:
-        return defSize;
-    }
-  }
-
-  public enum FontSize {NORMAL, SMALL, MINI}
 
   public static void initSystemFontData() {
     if (ourSystemFontData != null) return;

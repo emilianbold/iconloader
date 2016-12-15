@@ -23,18 +23,8 @@ public class BufferExposingByteArrayOutputStream extends AsyncByteArrayOutputStr
   public BufferExposingByteArrayOutputStream() {
   }
 
-  public BufferExposingByteArrayOutputStream(int size) {
-    super(size);
-  }
-
   public byte[] getInternalBuffer() {
     return myBuffer;
   }
 
-  public int backOff(int size) {
-    assert size >= 0 : size;
-    myCount -= size;
-    assert myCount >= 0 : myCount;
-    return myCount;
-  }
 }

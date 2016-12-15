@@ -35,14 +35,6 @@ public final class ConcurrentSoftValueHashMap<K,V> extends ConcurrentRefValueHas
   public ConcurrentSoftValueHashMap() {
   }
 
-  public ConcurrentSoftValueHashMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
-    super(initialCapacity, loadFactor, concurrencyLevel);
-  }
-
-//  public ConcurrentSoftValueHashMap(int initialCapacity, float loadFactor, int concurrencyLevel, @NotNull TObjectHashingStrategy<K> hashingStrategy) {
-//    super(initialCapacity, loadFactor, concurrencyLevel, hashingStrategy);
-//  }
-
   private static class MySoftReference<K, V> extends SoftReference<V> implements ValueReference<K, V> {
     private final K key;
     private MySoftReference(@NotNull K key, @NotNull V referent, @NotNull ReferenceQueue<V> q) {

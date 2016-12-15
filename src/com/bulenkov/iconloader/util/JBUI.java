@@ -19,9 +19,6 @@ package com.bulenkov.iconloader.util;
 import com.bulenkov.iconloader.IconLoader;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.plaf.UIResource;
-import java.awt.*;
 
 /**
  * @author Konstantin Bulenkov
@@ -51,7 +48,7 @@ public class JBUI {
         if (fdata != null) {
             size = fdata.getSecond();
         } else {
-            size = Fonts.label().getSize();
+            size = UIManager.getFont("Label.font").getSize();
         }
         setScaleFactor(size / UIUtil.DEF_SYSTEM_FONT_SIZE);
     }
@@ -90,132 +87,12 @@ public class JBUI {
         return scale(fontSize);
     }
 
-    public static JBDimension size(int width, int height) {
-        return new JBDimension(width, height);
-    }
-
-    public static JBDimension size(int widthAndHeight) {
-        return new JBDimension(widthAndHeight, widthAndHeight);
-    }
-
-    public static JBDimension size(Dimension size) {
-        if (size instanceof JBDimension) {
-            final JBDimension jbSize = (JBDimension)size;
-            if (jbSize.originalScale == scale(1f)) {
-                return jbSize;
-            }
-            final JBDimension newSize = new JBDimension((int)(jbSize.width / jbSize.originalScale), (int)(jbSize.height / jbSize.originalScale));
-            return size instanceof UIResource ? newSize.asUIResource() : newSize;
-        }
-        return new JBDimension(size.width, size.height);
-    }
-
-    public static JBInsets insets(int top, int left, int bottom, int right) {
-        return new JBInsets(top, left, bottom, right);
-    }
-
-    public static JBInsets insets(int all) {
-        return insets(all, all, all, all);
-    }
-
-    public static JBInsets insets(int topBottom, int leftRight) {
-        return insets(topBottom, leftRight, topBottom, leftRight);
-    }
-
-    public static JBInsets emptyInsets() {
-        return new JBInsets(0, 0, 0, 0);
-    }
-
-    public static JBInsets insetsTop(int t) {
-        return insets(t, 0, 0, 0);
-    }
-
-    public static JBInsets insetsLeft(int l) {
-        return insets(0, l, 0, 0);
-    }
-
-    public static JBInsets insetsBottom(int b) {
-        return insets(0, 0, b, 0);
-    }
-
-    public static JBInsets insetsRight(int r) {
-        return insets(0, 0, 0, r);
-    }
-
-    public static EmptyIcon emptyIcon(int i) {
-        return (EmptyIcon)EmptyIcon.create(scale(i));
-    }
-
-    public static JBDimension emptySize() {
-        return new JBDimension(0, 0);
-    }
-
     public static float scale(float f) {
         return f * scaleFactor;
-    }
-
-    public static JBInsets insets(Insets insets) {
-        return JBInsets.create(insets);
     }
 
     public static boolean isHiDPI() {
         return scaleFactor > 1.0f;
     }
 
-    public static class Fonts {
-        public static JBFont label() {
-            return JBFont.create(UIManager.getFont("Label.font"), false);
-        }
-
-        public static JBFont label(float size) {
-            return label().deriveFont(scale(size));
-        }
-
-        public static JBFont smallFont() {
-            return label().deriveFont(UIUtil.getFontSize(UIUtil.FontSize.SMALL));
-        }
-
-        public static JBFont miniFont() {
-            return label().deriveFont(UIUtil.getFontSize(UIUtil.FontSize.MINI));
-        }
-
-        public static JBFont create(String fontFamily, int size) {
-            return JBFont.create(new Font(fontFamily, Font.PLAIN, size));
-        }
-    }
-
-    public static class Borders {
-        public static JBEmptyBorder empty(int top, int left, int bottom, int right) {
-            return new JBEmptyBorder(top, left, bottom, right);
-        }
-
-        public static JBEmptyBorder empty(int topAndBottom, int leftAndRight) {
-            return empty(topAndBottom, leftAndRight, topAndBottom, leftAndRight);
-        }
-
-        public static JBEmptyBorder emptyTop(int offset) {
-            return empty(offset, 0, 0, 0);
-        }
-
-        public static JBEmptyBorder emptyLeft(int offset) {
-            return empty(0, offset,  0, 0);
-        }
-
-        public static JBEmptyBorder emptyBottom(int offset) {
-            return empty(0, 0, offset, 0);
-        }
-
-        public static JBEmptyBorder emptyRight(int offset) {
-            return empty(0, 0, 0, offset);
-        }
-
-        public static JBEmptyBorder empty() {
-            return empty(0, 0, 0, 0);
-        }
-
-        public static Border empty(int offsets) {
-            return empty(offsets, offsets, offsets, offsets);
-        }
-
-    }
 }

@@ -371,21 +371,6 @@ public class ImageLoader implements Serializable {
     return IconLoader.isGoodSize(icon);
   }
 
-  /**
-   * @deprecated use {@link ImageDescList}
-   */
-  public static java.util.List<Pair<String, Integer>> getFileNames(@NotNull String file) {
-    return getFileNames(file, false, false);
-  }
-
-  /**
-   * @deprecated use {@link ImageDescList}
-   */
-  public static java.util.List<Pair<String, Integer>> getFileNames(@NotNull String file, boolean dark, boolean retina) {
-    new UnsupportedOperationException("unsupported method").printStackTrace();
-    return new ArrayList<Pair<String, Integer>>();
-  }
-
   @NotNull
   public static String getNameWithoutExtension(@NotNull String name) {
     int i = name.lastIndexOf('.');
