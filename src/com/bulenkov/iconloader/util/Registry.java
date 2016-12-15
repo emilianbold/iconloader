@@ -25,11 +25,4 @@ public class Registry {
     return "true".equalsIgnoreCase(value);
   }
 
-  public static Float getFloat(String key) {
-    try {
-      return Float.parseFloat(System.getProperty(key));
-    } catch (Exception e) {
-      return null;
-    }
-  }
 }

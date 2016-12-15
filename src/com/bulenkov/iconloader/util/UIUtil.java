@@ -127,10 +127,7 @@ public class UIUtil {
     Font font = getLabelFont();
 
     Float forcedScale = null;
-    if (Registry.is("ide.ui.scale.override")) {
-      forcedScale = Registry.getFloat("ide.ui.scale");
-    }
-    else if (SystemInfo.isLinux && !SystemInfo.isJetbrainsJvm) {
+    if (SystemInfo.isLinux && !SystemInfo.isJetbrainsJvm) {
       // With Oracle JDK: derive scale from X server DPI
       float scale = getScreenScale();
       if (scale > 1f) {
