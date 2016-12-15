@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.ImageFilter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -321,7 +322,7 @@ public class ImageLoader implements Serializable {
   private static Image load(@NotNull final InputStream inputStream, final int scale) {
     if (scale <= 0) throw new IllegalArgumentException("Scale must be 1 or greater");
     try {
-      BufferExposingByteArrayOutputStream outputStream = new BufferExposingByteArrayOutputStream();
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       try {
         byte[] buffer = new byte[1024];
         while (true) {
@@ -334,7 +335,7 @@ public class ImageLoader implements Serializable {
         inputStream.close();
       }
 
-      Image image = Toolkit.getDefaultToolkit().createImage(outputStream.getInternalBuffer(), 0, outputStream.size());
+      Image image = Toolkit.getDefaultToolkit().createImage(outputStream.toByteArray(), 0, outputStream.size());
 
       waitForImage(image);
 
