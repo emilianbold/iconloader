@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageFilter;
 import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.List;
