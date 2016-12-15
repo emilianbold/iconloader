@@ -27,9 +27,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageFilter;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
-import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -85,20 +83,6 @@ public final class IconLoader {
   //  return new InvariantIcon(getIcon(path), getIcon(darkVariantPath));
   //}
 
-  @Nullable
-  private static Icon getReflectiveIcon(@NotNull String path, ClassLoader classLoader) {
-    try {
-      @NonNls String pckg = path.startsWith("AllIcons.") ? "com.intellij.icons." : "icons.";
-      Class cur = Class.forName(pckg + path.substring(0, path.lastIndexOf('.')).replace('.', '$'), true, classLoader);
-      Field field = cur.getField(path.substring(path.lastIndexOf('.') + 1));
-
-      return (Icon)field.get(null);
-    }
-    catch (Exception e) {
-      return null;
-    }
-  }
-
   @NotNull
   public static Icon getIcon(@NotNull String path, @NotNull final Class aClass) {
     final Icon icon = findIcon(path, aClass);
@@ -144,8 +128,6 @@ public final class IconLoader {
   @Nullable
   public static Icon findIcon(@NotNull String path, @NotNull final Class aClass, boolean computeNow, boolean strict) {
     String originalPath = path;
-    path = patchPath(path);
-    if (isReflectivePath(path)) return getReflectiveIcon(path, aClass.getClassLoader());
 
     URL myURL = aClass.getResource(path);
     if (myURL == null) {
@@ -158,21 +140,6 @@ public final class IconLoader {
       ((CachedImageIcon)icon).myClassLoader = aClass.getClassLoader();
     }
     return icon;
-  }
-
-  private static String patchPath(@NotNull String path) {
-//    for (IconPathPatcher patcher : ourPatchers) {
-//      String newPath = patcher.patchPath(path);
-//      if (newPath != null) {
-//        path = newPath;
-//      }
-//    }
-    return path;
-  }
-
-  private static boolean isReflectivePath(@NotNull String path) {
-    List<String> paths = StringUtil.split(path, ".");
-    return paths.size() > 1 && paths.get(0).endsWith("Icons");
   }
 
   @Nullable
@@ -188,8 +155,6 @@ public final class IconLoader {
   @Nullable
   public static Icon findIcon(@NotNull String path, @NotNull ClassLoader classLoader) {
     String originalPath = path;
-    path = patchPath(path);
-    if (isReflectivePath(path)) return getReflectiveIcon(path, classLoader);
     if (!StringUtil.startsWithChar(path, '/')) return null;
 
     final URL url = classLoader.getResource(path.substring(1));
