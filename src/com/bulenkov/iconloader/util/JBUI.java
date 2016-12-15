@@ -42,11 +42,11 @@ public class JBUI {
         }
 
         UIUtil.initSystemFontData();
-        Pair<String, Integer> fdata = UIUtil.getSystemFontData();
+        Integer fdata = UIUtil.getSystemFontData();
 
         int size;
         if (fdata != null) {
-            size = fdata.getSecond();
+            size = fdata;
         } else {
             size = UIManager.getFont("Label.font").getSize();
         }

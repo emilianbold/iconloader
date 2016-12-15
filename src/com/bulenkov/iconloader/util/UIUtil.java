@@ -32,12 +32,12 @@ import java.lang.reflect.Field;
  */
 public class UIUtil {
   public static final Color TRANSPARENT_COLOR = new Color(0, 0, 0, 0);
-  private static volatile Pair<String, Integer> ourSystemFontData;
+  private static volatile Integer ourSystemFontSize;
   public static final float DEF_SYSTEM_FONT_SIZE = 12f; // TODO: consider 12 * 1.33 to compensate JDK's 72dpi font scale
 
   @Nullable
-  public static Pair<String, Integer> getSystemFontData() {
-    return ourSystemFontData;
+  public static Integer getSystemFontData() {
+    return ourSystemFontSize;
   }
 
   public static boolean isAppleRetina() {
@@ -121,7 +121,7 @@ public class UIUtil {
   }
 
   public static void initSystemFontData() {
-    if (ourSystemFontData != null) return;
+    if (ourSystemFontSize != null) return;
 
     // With JB Linux JDK the label font comes properly scaled based on Xft.dpi settings.
     Font font = getLabelFont();
@@ -154,7 +154,7 @@ public class UIUtil {
       // the system font comes unscaled.
       font = font.deriveFont(DEF_SYSTEM_FONT_SIZE * forcedScale.floatValue());
     }
-    ourSystemFontData = Pair.create(font.getName(), font.getSize());
+    ourSystemFontSize = font.getSize();
   }
 
   private static float getScreenScale() {
