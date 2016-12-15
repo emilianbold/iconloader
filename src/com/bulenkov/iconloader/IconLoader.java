@@ -28,10 +28,7 @@ import java.awt.image.ImageFilter;
 import java.lang.ref.Reference;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.*;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -41,14 +38,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class IconLoader {
   public static boolean STRICT = false;
   private static boolean USE_DARK_ICONS = UIUtil.isUnderDarcula();
-
-  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-  private static final ConcurrentMap<URL, CachedImageIcon> ourIconsCache = new ConcurrentHashMap<URL, CachedImageIcon>(100, 0.9f, 2);
-
-  /**
-   * This cache contains mapping between icons and disabled icons.
-   */
-  private static final Map<Icon, Icon> ourIcon2DisabledIcon = new WeakHashMap<Icon, Icon>(200);
 
   private static float SCALE = JBUI.scale(1f);
   private static ImageFilter IMAGE_FILTER;
@@ -73,13 +62,11 @@ public final class IconLoader {
 
   public static void setUseDarkIcons(boolean useDarkIcons) {
     USE_DARK_ICONS = useDarkIcons;
-    clearCache();
   }
 
   public static void setScale(float scale) {
     if (scale != SCALE) {
       SCALE = scale;
-      clearCache();
     }
   }
 
@@ -89,13 +76,7 @@ public final class IconLoader {
     }
     if (IMAGE_FILTER != filter) {
       IMAGE_FILTER = filter;
-      clearCache();
     }
-  }
-
-  private static void clearCache() {
-    ourIconsCache.clear();
-    ourIcon2DisabledIcon.clear();
   }
 
   //TODO[kb] support iconsets
@@ -214,21 +195,11 @@ public final class IconLoader {
 
   @Nullable
   public static Icon findIcon(URL url) {
-    return findIcon(url, true);
-  }
-
-  @Nullable
-  public static Icon findIcon(URL url, boolean useCache) {
     if (url == null) {
       return null;
     }
-    CachedImageIcon icon = ourIconsCache.get(url);
-    if (icon == null) {
+    CachedImageIcon icon;
       icon = new CachedImageIcon(url);
-      if (useCache) {
-        icon = ConcurrencyUtil.cacheOrGet(ourIconsCache, url, icon);
-      }
-    }
     return icon;
   }
 
@@ -276,8 +247,7 @@ public final class IconLoader {
     if (icon instanceof LazyIcon) icon = ((LazyIcon)icon).getOrComputeIcon();
     if (icon == null) return null;
 
-    Icon disabledIcon = ourIcon2DisabledIcon.get(icon);
-    if (disabledIcon == null) {
+    Icon disabledIcon;
       if (!isGoodSize(icon)) {
         return EMPTY_ICON;
       }
@@ -297,8 +267,6 @@ public final class IconLoader {
       if (UIUtil.isRetina()) img = RetinaImage.createFrom(img);
 
       disabledIcon = new JBImageIcon(img);
-      ourIcon2DisabledIcon.put(icon, disabledIcon);
-    }
     return disabledIcon;
   }
 
@@ -374,7 +342,6 @@ public final class IconLoader {
         dark = USE_DARK_ICONS;
         scale = SCALE;
         filter = IMAGE_FILTER;
-        myScaledIconsCache.clear();
       }
       Object realIcon = myRealIcon;
       if (realIcon instanceof Icon) return (ImageIcon)realIcon;
@@ -440,34 +407,15 @@ public final class IconLoader {
     }
 
     private class MyScaledIconsCache {
-      // Map {false -> image}, {true -> image@2x}
-      private Map<Boolean, SoftReference<Image>> origImagesCache = Collections.synchronizedMap(new HashMap<Boolean, SoftReference<Image>>(2));
-
-      private static final int SCALED_ICONS_CACHE_LIMIT = 5;
-
-      // Map {effective scale -> icon}
-      private Map<Float, SoftReference<Icon>> scaledIconsCache = Collections.synchronizedMap(new LinkedHashMap<Float, SoftReference<Icon>>(SCALED_ICONS_CACHE_LIMIT) {
-        @Override
-        public boolean removeEldestEntry(Map.Entry<Float, SoftReference<Icon>> entry) {
-          return size() > SCALED_ICONS_CACHE_LIMIT;
-        }
-      });
-
       public Image getOrigImage(boolean retina) {
-        Image img = SoftReference.dereference(origImagesCache.get(retina));
-
-        if (img == null) {
-          img = ImageLoader.loadFromUrl(myUrl, UIUtil.isUnderDarcula(), retina, filter);
-          origImagesCache.put(retina, new SoftReference<Image>(img));
-        }
+        Image img = ImageLoader.loadFromUrl(myUrl, UIUtil.isUnderDarcula(), retina, filter);
         return img;
       }
 
       public Icon getScaledIcon(float scale) {
         float effectiveScale = scale * JBUI.scale(1f);
-        Icon icon = SoftReference.dereference(scaledIconsCache.get(effectiveScale));
+        Icon icon = null;
 
-        if (icon == null) {
           boolean needRetinaImage = (effectiveScale >= 1.5f || UIUtil.isRetina());
           Image image = getOrigImage(needRetinaImage);
 
@@ -480,15 +428,8 @@ public final class IconLoader {
             if (UIUtil.isRetina()) resizedImage = RetinaImage.createFrom(resizedImage);
 
             icon = getIcon(resizedImage);
-            scaledIconsCache.put(effectiveScale, new SoftReference<Icon>(icon));
           }
-        }
         return icon;
-      }
-
-      public void clear() {
-        scaledIconsCache.clear();
-        origImagesCache.clear();
       }
     }
   }

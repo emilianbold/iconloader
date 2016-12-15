@@ -32,15 +32,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Konstantin Bulenkov
  */
 public class ImageLoader implements Serializable {
 //  private static final Log LOG = Logger.getLogger("#com.intellij.util.ImageLoader");
-
-  private static final ConcurrentMap<String, Image> ourCache = new ConcurrentSoftValueHashMap<String, Image>();
 
   private static class ImageDesc {
     public enum Type {
@@ -80,7 +77,6 @@ public class ImageLoader implements Serializable {
 
     @Nullable
     public Image load() throws IOException {
-      String cacheKey = null;
       InputStream stream = null;
       URL url = null;
       if (cls != null) {
@@ -94,17 +90,10 @@ public class ImageLoader implements Serializable {
         if (connection instanceof HttpURLConnection) {
           if (!original) return null;
           connection.addRequestProperty("User-Agent", "IntelliJ");
-
-          cacheKey = path;
-          Image image = ourCache.get(cacheKey);
-          if (image != null) return image;
         }
         stream = connection.getInputStream();
       }
       Image image = type.load(url, stream, scale);
-      if (image != null && cacheKey != null) {
-        ourCache.put(cacheKey, image);
-      }
       return image;
     }
 
