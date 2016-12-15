@@ -181,7 +181,6 @@ public final class IconLoader {
    */
   @Nullable
   public static Icon getDisabledIcon(Icon icon) {
-    if (icon instanceof LazyIcon) icon = ((LazyIcon)icon).getOrComputeIcon();
     if (icon == null) return null;
 
     Icon disabledIcon;
@@ -367,52 +366,6 @@ public final class IconLoader {
         return icon;
       }
     }
-  }
-
-  public abstract static class LazyIcon implements Icon {
-    private boolean myWasComputed;
-    private Icon myIcon;
-    private boolean isDarkVariant = USE_DARK_ICONS;
-    private float scale = SCALE;
-//    private int numberOfPatchers = 0;
-
-    @Override
-    public void paintIcon(Component c, Graphics g, int x, int y) {
-      final Icon icon = getOrComputeIcon();
-      if (icon != null) {
-        icon.paintIcon(c, g, x, y);
-      }
-    }
-
-    @Override
-    public int getIconWidth() {
-      final Icon icon = getOrComputeIcon();
-      return icon != null ? icon.getIconWidth() : 0;
-    }
-
-    @Override
-    public int getIconHeight() {
-      final Icon icon = getOrComputeIcon();
-      return icon != null ? icon.getIconHeight() : 0;
-    }
-
-    protected final synchronized Icon getOrComputeIcon() {
-      if (!myWasComputed || isDarkVariant != USE_DARK_ICONS || scale != SCALE) {
-        isDarkVariant = USE_DARK_ICONS;
-        scale = SCALE;
-        myWasComputed = true;
-//        numberOfPatchers = ourPatchers.size();
-        myIcon = compute();
-      }
-
-      return myIcon;
-    }
-
-    public final void load() {
-      getIconWidth();
-    }
-
-    protected abstract Icon compute();
   }
 
   private static class LabelHolder {
