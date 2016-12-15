@@ -16,10 +16,6 @@
 
 package com.bulenkov.iconloader.util;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -186,18 +182,6 @@ public class StringUtil {
 
   public static boolean endsWithChar(CharSequence s, char suffix) {
     return s != null && s.length() != 0 && s.charAt(s.length() - 1) == suffix;
-  }
-
-  @Contract(pure = true)
-  public static String join(@NotNull Iterable<?> items, @NotNull @NonNls String separator) {
-    StringBuilder result = new StringBuilder();
-    for (Object item : items) {
-      result.append(item).append(separator);
-    }
-    if (result.length() > 0) {
-      result.setLength(result.length() - separator.length());
-    }
-    return result.toString();
   }
 
 }

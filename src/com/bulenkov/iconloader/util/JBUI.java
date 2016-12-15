@@ -81,12 +81,6 @@ public class JBUI {
         return Math.round(scaleFactor * i);
     }
 
-    public static int scaleFontSize(int fontSize) {
-        if (scaleFactor == 1.25f) return (int)(fontSize * 1.34f);
-        if (scaleFactor == 1.75f) return (int)(fontSize * 1.67f);
-        return scale(fontSize);
-    }
-
     public static float scale(float f) {
         return f * scaleFactor;
     }

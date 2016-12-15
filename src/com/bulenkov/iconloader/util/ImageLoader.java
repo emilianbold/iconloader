@@ -16,13 +16,11 @@
 
 package com.bulenkov.iconloader.util;
 
-import com.bulenkov.iconloader.IconLoader;
 import com.bulenkov.iconloader.RetinaImage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.ImageFilter;
 import java.io.IOException;
@@ -347,10 +345,6 @@ public class ImageLoader implements Serializable {
     }
 
     return null;
-  }
-
-  public static boolean isGoodSize(final Icon icon) {
-    return IconLoader.isGoodSize(icon);
   }
 
   @NotNull
