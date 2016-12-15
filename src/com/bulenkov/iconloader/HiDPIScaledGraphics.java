@@ -16,8 +16,6 @@
 
 package com.bulenkov.iconloader;
 
-import com.bulenkov.iconloader.util.GraphicsUtil;
-
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -41,7 +39,8 @@ class HiDPIScaledGraphics extends Graphics2D {
     myImage = image;
     myPeer = (Graphics2D) g;
     scale(2, 2);
-    GraphicsUtil.setupAAPainting(myPeer);
+    myPeer.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    myPeer.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
   }
 
   @Override
