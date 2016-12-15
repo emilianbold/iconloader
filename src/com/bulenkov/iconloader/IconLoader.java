@@ -45,7 +45,6 @@ public final class IconLoader {
     }
   };
 
-  private static AtomicBoolean ourIsActivated = new AtomicBoolean(true);
   private static AtomicBoolean ourIsSaveRealIconPath = new AtomicBoolean(false);
   public static final Component ourComponent = new Component() {};
 
@@ -72,18 +71,6 @@ public final class IconLoader {
       System.err.println("Icon cannot be found in '" + path + "', aClass='" + aClass + "'");
     }
     return icon;
-  }
-
-  public static void activate() {
-    ourIsActivated.set(true);
-  }
-
-  public static void disable() {
-    ourIsActivated.set(false);
-  }
-
-  public static boolean isLoaderDisabled() {
-    return !ourIsActivated.get();
   }
 
   /**
@@ -259,8 +246,6 @@ public final class IconLoader {
 
     @NotNull
     private synchronized ImageIcon getRealIcon() {
-      if (isLoaderDisabled() && (myRealIcon == null || dark != USE_DARK_ICONS)) return EMPTY_ICON;
-
       if (!isValid()) {
         myRealIcon = null;
         dark = USE_DARK_ICONS;
