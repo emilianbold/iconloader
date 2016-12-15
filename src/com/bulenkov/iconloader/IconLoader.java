@@ -84,14 +84,6 @@ public final class IconLoader {
   //  return new InvariantIcon(getIcon(path), getIcon(darkVariantPath));
   //}
 
-  @NotNull
-  public static Icon getIcon(@NonNls @NotNull final String path) {
-    Class callerClass = ReflectionUtil.getGrandCallerClass();
-
-    assert callerClass != null : path;
-    return getIcon(path, callerClass);
-  }
-
   @Nullable
   private static Icon getReflectiveIcon(@NotNull String path, ClassLoader classLoader) {
     try {
@@ -104,17 +96,6 @@ public final class IconLoader {
     catch (Exception e) {
       return null;
     }
-  }
-
-  /**
-   * Might return null if icon was not found.
-   * Use only if you expected null return value, otherwise see {@link IconLoader#getIcon(String)}
-   */
-  @Nullable
-  public static Icon findIcon(@NonNls @NotNull String path) {
-    Class callerClass = ReflectionUtil.getGrandCallerClass();
-    if (callerClass == null) return null;
-    return findIcon(path, callerClass);
   }
 
   @NotNull

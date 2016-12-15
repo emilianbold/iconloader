@@ -50,7 +50,7 @@ public abstract class IconLoaderTestCase extends TestCase {
   public void checkIcon(String path, boolean isRetina, boolean isDark, String expectedName) throws Exception {
     setRetina(isRetina);
     setDarkIcons(isDark);
-    final Icon icon = IconLoader.getIcon(path);
+    final Icon icon = IconLoader.getIcon(path, getClass());
     assert icon != null : "Can't find icon '" + path + "'";
     icon.getIconHeight();
 

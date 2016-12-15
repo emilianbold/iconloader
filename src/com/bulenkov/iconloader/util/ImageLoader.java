@@ -301,13 +301,6 @@ public class ImageLoader implements Serializable {
   }
 
   @Nullable
-  public static Image loadFromResource(@NonNls @NotNull String s) {
-    Class callerClass = ReflectionUtil.getGrandCallerClass();
-    if (callerClass == null) return null;
-    return loadFromResource(s, callerClass);
-  }
-
-  @Nullable
   public static Image loadFromResource(@NonNls @NotNull String path, @NotNull Class aClass) {
     return ImageDescList.create(path, aClass, UIUtil.isUnderDarcula(), UIUtil.isRetina() || JBUI.scale(1.0f) >= 1.5f, true).
       load(ImageConverterChain.create().withRetina());

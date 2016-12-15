@@ -31,9 +31,9 @@ public class IconLoaderDemoFrame extends JFrame {
     getContentPane().add(panel);
     JPanel bottom = new JPanel(new BorderLayout());
     panel.add(bottom, BorderLayout.SOUTH);
-    JButton disabledButton = new JButton("Print disabled", IconLoader.getIcon("/icons/print.png"));
+    JButton disabledButton = new JButton("Print disabled", IconLoader.getIcon("/icons/print.png", getClass()));
     disabledButton.setEnabled(false);
-    JButton enabledButton = new JButton("Print enabled", IconLoader.getIcon("/icons/print.png"));
+    JButton enabledButton = new JButton("Print enabled", IconLoader.getIcon("/icons/print.png", getClass()));
     bottom.add(disabledButton, BorderLayout.WEST);
     bottom.add(enabledButton, BorderLayout.EAST);
 
