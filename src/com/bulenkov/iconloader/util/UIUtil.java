@@ -19,7 +19,6 @@ package com.bulenkov.iconloader.util;
 import com.bulenkov.iconloader.IsRetina;
 import com.bulenkov.iconloader.JBHiDPIScaledImage;
 import com.bulenkov.iconloader.RetinaImage;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,13 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class UIUtil {
   public static final Color TRANSPARENT_COLOR = new Color(0, 0, 0, 0);
-  private static volatile Integer ourSystemFontSize;
-  public static final float DEF_SYSTEM_FONT_SIZE = 12f; // TODO: consider 12 * 1.33 to compensate JDK's 72dpi font scale
-
-  @Nullable
-  public static Integer getSystemFontData() {
-    return ourSystemFontSize;
-  }
 
   public static boolean isAppleRetina() {
     return isRetina() && SystemInfo.isAppleJvm;
@@ -116,57 +108,4 @@ public class UIUtil {
     return isUnderDarcula() ? DARCULA_GRAY_FILTER : DEFAULT_GRAY_FILTER;
   }
 
-  public static Font getLabelFont() {
-    return UIManager.getFont("Label.font");
-  }
-
-  public static void initSystemFontData() {
-    if (ourSystemFontSize != null) return;
-
-    // With JB Linux JDK the label font comes properly scaled based on Xft.dpi settings.
-    Font font = getLabelFont();
-
-    Float forcedScale = null;
-    if (SystemInfo.isLinux && !SystemInfo.isJetbrainsJvm) {
-      // With Oracle JDK: derive scale from X server DPI
-      float scale = getScreenScale();
-      if (scale > 1f) {
-        forcedScale = scale;
-      }
-      // Or otherwise leave the detected font. It's undetermined if it's scaled or not.
-      // If it is (likely with GTK DE), then the UI scale will be derived from it,
-      // if it's not, then IDEA will start unscaled. This lets the users of GTK DEs
-      // not to bother about X server DPI settings. Users of other DEs (like KDE)
-      // will have to set X server DPI to meet their display.
-    }
-    else if (SystemInfo.isWindows) {
-      //noinspection HardCodedStringLiteral
-      Font winFont = (Font)Toolkit.getDefaultToolkit().getDesktopProperty("win.messagebox.font");
-      if (winFont != null) {
-        font = winFont; // comes scaled
-      }
-    }
-    if (forcedScale != null) {
-      // With forced scale, we derive font from a hard-coded value as we cannot be sure
-      // the system font comes unscaled.
-      font = font.deriveFont(DEF_SYSTEM_FONT_SIZE * forcedScale.floatValue());
-    }
-    ourSystemFontSize = font.getSize();
-  }
-
-  private static float getScreenScale() {
-    int dpi = 96;
-    try {
-      dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-    } catch (HeadlessException e) {
-    }
-    float scale = 1f;
-    if (dpi < 120) scale = 1f;
-    else if (dpi < 144) scale = 1.25f;
-    else if (dpi < 168) scale = 1.5f;
-    else if (dpi < 192) scale = 1.75f;
-    else scale = 2f;
-
-    return scale;
-  }
 }

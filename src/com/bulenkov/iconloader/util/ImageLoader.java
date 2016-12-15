@@ -136,18 +136,6 @@ public class ImageLoader implements Serializable {
         final String name = getNameWithoutExtension(file);
         final String ext = getExtension(file);
 
-        float scale = calcScaleFactor(allowFloatScaling);
-
-        // TODO: allow SVG images to freely scale on Retina
-
-//        if (Registry.is("ide.svg.icon") && dark) {
-//          vars.add(new ImageDesc(name + "_dark.svg", cls, UIUtil.isRetina() ? 2f : scale, ImageDesc.Type.SVG));
-//        }
-//
-//        if (Registry.is("ide.svg.icon")) {
-//          vars.add(new ImageDesc(name + ".svg", cls, UIUtil.isRetina() ? 2f : scale, ImageDesc.Type.SVG));
-//        }
-
         if (dark && retina) {
           vars.add(new ImageDesc(name + "@2x_dark." + ext, cls, 2f, ImageDesc.Type.PNG));
         }
@@ -239,16 +227,14 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(@NotNull URL url, boolean allowFloatScaling, ImageFilter filter) {
-    final float scaleFactor = calcScaleFactor(allowFloatScaling);
-
     // We can't check all 3rd party plugins and convince the authors to add @2x icons.
     // (scaleFactor > 1.0) != isRetina() => we should scale images manually.
     // Note we never scale images on Retina displays because scaling is handled by the system.
-    final boolean scaleImages = (scaleFactor > 1.0f) && !UIUtil.isRetina();
+    final boolean scaleImages = false;
 
     // For any scale factor > 1.0, always prefer retina images, because downscaling
     // retina images provides a better result than upscaling non-retina images.
-    final boolean loadRetinaImages = UIUtil.isRetina() || scaleImages;
+    final boolean loadRetinaImages = UIUtil.isRetina();
 
     return ImageDescList.create(url.toString(), null, UIUtil.isUnderDarcula(), loadRetinaImages, allowFloatScaling).load(
       ImageConverterChain.create().
@@ -258,19 +244,13 @@ public class ImageLoader implements Serializable {
               public Image convert(Image source, ImageDesc desc) {
                 if (source != null && scaleImages /*&& desc.type != ImageDesc.Type.SVG*/) {
                   if (desc.path.contains("@2x"))
-                    return scaleImage(source, scaleFactor / 2.0f);  // divide by 2.0 as Retina images are 2x the resolution.
+                    return scaleImage(source, 1.0f / 2.0f);  // divide by 2.0 as Retina images are 2x the resolution.
                   else
-                    return scaleImage(source, scaleFactor);
+                    return scaleImage(source, 1.0f);
                 }
                 return source;
               }
         }));
-  }
-
-  private static float calcScaleFactor(boolean allowFloatScaling) {
-    float scaleFactor = allowFloatScaling ? JBUI.scale(1f) : JBUI.scale(1f) > 1.5f ? 2f : 1f;
-    assert scaleFactor >= 1.0f : "By design, only scale factors >= 1.0 are supported";
-    return scaleFactor;
   }
 
   @NotNull
@@ -301,7 +281,7 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromResource(@NonNls @NotNull String path, @NotNull Class aClass) {
-    return ImageDescList.create(path, aClass, UIUtil.isUnderDarcula(), UIUtil.isRetina() || JBUI.scale(1.0f) >= 1.5f, true).
+    return ImageDescList.create(path, aClass, UIUtil.isUnderDarcula(), UIUtil.isRetina(), true).
       load(ImageConverterChain.create().withRetina());
   }
 

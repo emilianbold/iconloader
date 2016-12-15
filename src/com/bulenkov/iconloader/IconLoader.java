@@ -38,8 +38,6 @@ public final class IconLoader {
   public static boolean STRICT = false;
   private static boolean USE_DARK_ICONS = UIUtil.isUnderDarcula();
 
-  private static float SCALE = JBUI.scale(1f);
-
   private static final ImageIcon EMPTY_ICON = new ImageIcon(UIUtil.createImage(1, 1, BufferedImage.TYPE_3BYTE_BGR)) {
     @NonNls
     public String toString() {
@@ -60,12 +58,6 @@ public final class IconLoader {
 
   public static void setUseDarkIcons(boolean useDarkIcons) {
     USE_DARK_ICONS = useDarkIcons;
-  }
-
-  public static void setScale(float scale) {
-    if (scale != SCALE) {
-      SCALE = scale;
-    }
   }
 
   //TODO[kb] support iconsets
@@ -236,7 +228,7 @@ public final class IconLoader {
 
   /**
    * Gets a snapshot of the icon, immune to changes made by these calls:
-   * {@link IconLoader#setScale(float)}, {@link IconLoader#setUseDarkIcons(boolean)}
+   * {@link IconLoader#setUseDarkIcons(boolean)}
    *
    * @param icon the source icon
    * @return the icon snapshot
@@ -256,26 +248,22 @@ public final class IconLoader {
     @NotNull
     private URL myUrl;
     private volatile boolean dark;
-    private volatile float scale;
     private volatile int numberOfPatchers = 0;
 
     private volatile ImageFilter filter;
-    private final MyScaledIconsCache myScaledIconsCache = new MyScaledIconsCache();
 
     public CachedImageIcon(@NotNull URL url) {
       myUrl = url;
       dark = USE_DARK_ICONS;
-      scale = SCALE;
     }
 
     @NotNull
     private synchronized ImageIcon getRealIcon() {
-      if (isLoaderDisabled() && (myRealIcon == null || dark != USE_DARK_ICONS || scale != SCALE)) return EMPTY_ICON;
+      if (isLoaderDisabled() && (myRealIcon == null || dark != USE_DARK_ICONS)) return EMPTY_ICON;
 
       if (!isValid()) {
         myRealIcon = null;
         dark = USE_DARK_ICONS;
-        scale = SCALE;
       }
       Object realIcon = myRealIcon;
       if (realIcon instanceof Icon) return (ImageIcon)realIcon;
@@ -303,7 +291,7 @@ public final class IconLoader {
     }
 
     private boolean isValid() {
-      return dark == USE_DARK_ICONS && scale == SCALE;
+      return dark == USE_DARK_ICONS;
     }
 
     @Override
@@ -326,46 +314,6 @@ public final class IconLoader {
       return myUrl.toString();
     }
 
-    public Icon scale(float scaleFactor) {
-      if (scaleFactor == 1f) {
-        return this;
-      }
-
-      if (!isValid()) getRealIcon(); // force state update & cache reset
-
-      Icon icon = myScaledIconsCache.getScaledIcon(scaleFactor);
-      if (icon != null) {
-        return icon;
-      }
-      return this;
-    }
-
-    private class MyScaledIconsCache {
-      public Image getOrigImage(boolean retina) {
-        Image img = ImageLoader.loadFromUrl(myUrl, UIUtil.isUnderDarcula(), retina, filter);
-        return img;
-      }
-
-      public Icon getScaledIcon(float scale) {
-        float effectiveScale = scale * JBUI.scale(1f);
-        Icon icon = null;
-
-          boolean needRetinaImage = (effectiveScale >= 1.5f || UIUtil.isRetina());
-          Image image = getOrigImage(needRetinaImage);
-
-          if (image != null) {
-            Image iconImage = getRealIcon().getImage();
-            int width = (int)(ImageUtil.getRealWidth(iconImage) * scale);
-            int height = (int)(ImageUtil.getRealHeight(iconImage) * scale);
-
-            Image resizedImage = Scalr.resize(ImageUtil.toBufferedImage(image), Scalr.Method.ULTRA_QUALITY, width, height);
-            if (UIUtil.isRetina()) resizedImage = RetinaImage.createFrom(resizedImage);
-
-            icon = getIcon(resizedImage);
-          }
-        return icon;
-      }
-    }
   }
 
   private static class LabelHolder {
