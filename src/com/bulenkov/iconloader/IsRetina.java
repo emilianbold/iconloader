@@ -17,9 +17,9 @@
 package com.bulenkov.iconloader;
 
 import apple.awt.CImage;
-import com.bulenkov.iconloader.util.Ref;
 
 import java.awt.image.BufferedImage;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Konstantin Bulenkov
@@ -27,7 +27,7 @@ import java.awt.image.BufferedImage;
 public class IsRetina {
   public static boolean isRetina() {
     try {
-      final Ref<Boolean> isRetina = Ref.create(false);
+      final AtomicBoolean isRetina = new AtomicBoolean(false);
 
       new CImage.HiDPIScaledImage(1, 1, BufferedImage.TYPE_INT_ARGB) {
         @Override

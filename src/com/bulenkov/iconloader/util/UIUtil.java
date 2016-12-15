@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.lang.reflect.Field;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Konstantin Bulenkov
@@ -65,11 +66,11 @@ public class UIUtil {
   }
 
 
-  private static final Ref<Boolean> ourRetina = Ref.create(SystemInfo.isMac ? null : false);
+  private static AtomicBoolean ourRetina = SystemInfo.isMac ? null : new AtomicBoolean(false);
 
-  public static boolean isRetina() {
-    synchronized (ourRetina) {
-      if (ourRetina.isNull()) {
+  public static synchronized  boolean isRetina() {
+      if (ourRetina == null) {
+        ourRetina = new AtomicBoolean();
         ourRetina.set(false); // in case HiDPIScaledImage.drawIntoImage is not called for some reason
 
         if (SystemInfo.isJavaVersionAtLeast("1.6.0_33") && SystemInfo.isAppleJvm) {
@@ -97,7 +98,6 @@ public class UIUtil {
       }
 
       return ourRetina.get();
-    }
   }
 
   public static BufferedImage createImage(int width, int height, int type) {

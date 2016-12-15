@@ -16,12 +16,12 @@
 
 package com.bulenkov.iconloader;
 
-import com.bulenkov.iconloader.util.Ref;
 import com.bulenkov.iconloader.util.UIUtil;
 import junit.framework.TestCase;
 
 import javax.swing.*;
 import java.lang.reflect.Field;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Konstantin Bulenkov
@@ -39,7 +39,7 @@ public abstract class IconLoaderTestCase extends TestCase {
     final Field ourRetina = UIUtil.class.getDeclaredField("ourRetina");
     ourRetina.setAccessible(true);
     //noinspection unchecked
-    final Ref<Boolean> ref = (Ref<Boolean>)ourRetina.get(null);
+    final AtomicBoolean ref = (AtomicBoolean)ourRetina.get(null);
     ref.set(isRetina);
   }
 
