@@ -57,6 +57,10 @@ public final class IconLoader {
     Image image = ImageLoader.loadFromUrl(url);
     ImageIcon ii = checkIcon(image, url);
 
+    if(ii == null) {
+      return null;
+    }
+
     return new IconWrapper(ii);
   }
 
