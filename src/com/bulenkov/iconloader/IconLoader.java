@@ -110,7 +110,24 @@ public final class IconLoader {
       return null;
     }
     Image image = ImageLoader.loadFromUrl(url, true);
-    return checkIcon(image, url);
+    final ImageIcon ii = checkIcon(image, url);
+
+    return new Icon() {
+      @Override
+      public void paintIcon(Component c, Graphics g, int x, int y) {
+        ii.paintIcon(c, g, x, y);
+      }
+
+      @Override
+      public int getIconWidth() {
+        return ii.getIconWidth();
+      }
+
+      @Override
+      public int getIconHeight() {
+        return ii.getIconHeight();
+      }
+    };
   }
 
   @Nullable
