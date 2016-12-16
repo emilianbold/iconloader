@@ -16,8 +16,6 @@
 
 package com.bulenkov.iconloader;
 
-import com.bulenkov.iconloader.util.SystemInfo;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -54,12 +52,6 @@ public class RetinaImage {
     int h = image.getHeight(observer);
 
     Image hidpi = create(image, w / scale, h / scale, BufferedImage.TYPE_INT_ARGB);
-    if (SystemInfo.isAppleJvm) {
-      Graphics2D g = (Graphics2D)hidpi.getGraphics();
-      g.scale(1f / scale, 1f / scale);
-      g.drawImage(image, 0, 0, null);
-      g.dispose();
-    }
 
     return hidpi;
   }
@@ -70,15 +62,11 @@ public class RetinaImage {
 
 
   private static BufferedImage create(Image image, final int width, int height, int type) {
-    if (SystemInfo.isAppleJvm) {
-      return AppleHiDPIScaledImage.create(width, height, type);
-    } else {
       if (image == null) {
         return new JBHiDPIScaledImage(width, height, type);
       } else {
         return new JBHiDPIScaledImage(image, width, height, type);
       }
-    }
   }
 
 }

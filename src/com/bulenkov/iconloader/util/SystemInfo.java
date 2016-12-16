@@ -19,33 +19,10 @@ package com.bulenkov.iconloader.util;
 /**
  * @author Konstantin Bulenkov
  */
-@SuppressWarnings({"HardCodedStringLiteral", "UtilityClassWithoutPrivateConstructor", "UnusedDeclaration"})
 public class SystemInfo {
   public static final String OS_NAME = System.getProperty("os.name");
-  public static final String JAVA_RUNTIME_VERSION = System.getProperty("java.runtime.version");
 
   protected static final String _OS_NAME = OS_NAME.toLowerCase();
   public static final boolean isMac = _OS_NAME.startsWith("mac");
-
-  public static final boolean isAppleJvm = isAppleJvm();
-  public static final boolean isOracleJvm = isOracleJvm();
-
-  public static boolean isJavaVersionAtLeast(String v) {
-    return StringUtil.compareVersionNumbers(JAVA_RUNTIME_VERSION, v) >= 0;
-  }
-
-  private static boolean isOracleJvm() {
-    final String vendor = getJavaVmVendor();
-    return vendor != null && vendor.toLowerCase().contains("oracle");
-  }
-
-  private static boolean isAppleJvm() {
-    final String vendor = getJavaVmVendor();
-    return vendor != null && vendor.toLowerCase().contains("apple");
-  }
-
-  public static String getJavaVmVendor() {
-    return System.getProperty("java.vm.vendor");
-  }
 
 }

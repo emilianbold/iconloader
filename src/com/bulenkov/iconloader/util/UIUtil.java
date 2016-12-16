@@ -61,7 +61,6 @@ public class UIUtil {
         ourRetina = new AtomicBoolean();
         ourRetina.set(false); // in case HiDPIScaledImage.drawIntoImage is not called for some reason
 
-        if (SystemInfo.isJavaVersionAtLeast("1.7.0_40") && SystemInfo.isOracleJvm) {
           GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
           final GraphicsDevice device = env.getDefaultScreenDevice();
           try {
@@ -76,7 +75,6 @@ public class UIUtil {
             }
           } catch (Exception ignore) {
           }
-        }
         ourRetina.set(false);
       }
 
