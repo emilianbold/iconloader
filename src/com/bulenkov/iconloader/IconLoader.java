@@ -16,7 +16,10 @@
 
 package com.bulenkov.iconloader;
 
-import com.bulenkov.iconloader.util.*;
+import com.bulenkov.iconloader.util.ImageLoader;
+import com.bulenkov.iconloader.util.ImageUtil;
+import com.bulenkov.iconloader.util.JBImageIcon;
+import com.bulenkov.iconloader.util.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,27 +49,8 @@ public final class IconLoader {
 
   private IconLoader() { }
 
-  @Deprecated
-  public static Icon getIcon(@NotNull final Image image) {
-    return new JBImageIcon(image);
-  }
-
   public static void setUseDarkIcons(boolean useDarkIcons) {
     USE_DARK_ICONS = useDarkIcons;
-  }
-
-  //TODO[kb] support iconsets
-  //public static Icon getIcon(@NotNull final String path, @NotNull final String darkVariantPath) {
-  //  return new InvariantIcon(getIcon(path), getIcon(darkVariantPath));
-  //}
-
-  @NotNull
-  public static Icon getIcon(@NotNull String path, @NotNull final Class aClass) {
-    final Icon icon = findIcon(path, aClass);
-    if (icon == null) {
-      System.err.println("Icon cannot be found in '" + path + "', aClass='" + aClass + "'");
-    }
-    return icon;
   }
 
   /**
@@ -78,22 +62,9 @@ public final class IconLoader {
 
   /**
    * Might return null if icon was not found.
-   * Use only if you expected null return value, otherwise see {@link IconLoader#getIcon(String, Class)}
    */
   @Nullable
-  public static Icon findIcon(@NotNull final String path, @NotNull final Class aClass) {
-    String originalPath = path;
-
-    URL myURL = aClass.getResource(path);
-    if (myURL == null) {
-      return null;
-    }
-    final Icon icon = findIcon(myURL);
-    return icon;
-  }
-
-  @Nullable
-  public static Icon findIcon(URL url) {
+  public static Icon getIcon(URL url) {
     if (url == null) {
       return null;
     }
@@ -104,22 +75,12 @@ public final class IconLoader {
   }
 
   @Nullable
-  public static Icon findIcon(@NotNull String path, @NotNull ClassLoader classLoader) {
-    String originalPath = path;
-    if (!StringUtil.startsWithChar(path, '/')) return null;
-
-    final URL url = classLoader.getResource(path.substring(1));
-    final Icon icon = findIcon(url);
-    return icon;
-  }
-
-  @Nullable
   private static ImageIcon checkIcon(final Image image, @NotNull URL url) {
     if (image == null || image.getHeight(LabelHolder.ourFakeComponent) < 1) { // image wasn't loaded or broken
       return null;
     }
 
-    final Icon icon = getIcon(image);
+    final Icon icon = new JBImageIcon(image);
     if (icon != null && !isGoodSize(icon)) {
       return EMPTY_ICON;
     }
