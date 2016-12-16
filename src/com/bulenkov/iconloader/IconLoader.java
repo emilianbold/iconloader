@@ -110,24 +110,9 @@ public final class IconLoader {
       return null;
     }
     Image image = ImageLoader.loadFromUrl(url, true);
-    final ImageIcon ii = checkIcon(image, url);
+    ImageIcon ii = checkIcon(image, url);
 
-    return new Icon() {
-      @Override
-      public void paintIcon(Component c, Graphics g, int x, int y) {
-        ii.paintIcon(c, g, x, y);
-      }
-
-      @Override
-      public int getIconWidth() {
-        return ii.getIconWidth();
-      }
-
-      @Override
-      public int getIconHeight() {
-        return ii.getIconHeight();
-      }
-    };
+    return new IconWrapper(ii);
   }
 
   @Nullable
@@ -187,7 +172,7 @@ public final class IconLoader {
       if (UIUtil.isRetina()) img = RetinaImage.createFrom(img);
 
       disabledIcon = new JBImageIcon(img);
-    return disabledIcon;
+    return new IconWrapper(disabledIcon);
   }
 
   public static Icon getTransparentIcon(@NotNull final Icon icon) {
