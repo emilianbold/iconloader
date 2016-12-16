@@ -20,36 +20,27 @@ import com.bulenkov.iconloader.JBHiDPIScaledImage;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
 
 /**
  * @author Konstantin Bulenkov
  */
 public class ImageUtil {
-  public static BufferedImage toBufferedImage(@NotNull Image image) {
+  private static ImageProducer getSource(@NotNull Image image) {
     if (image instanceof JBHiDPIScaledImage) {
       Image img = ((JBHiDPIScaledImage)image).getDelegate();
       if (img != null) {
-        image = img;
+        return img.getSource();
       }
     }
-    if (image instanceof BufferedImage) {
-      return (BufferedImage)image;
-    }
-
-    @SuppressWarnings("UndesirableClassUsage")
-    BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = bufferedImage.createGraphics();
-    g.drawImage(image, 0, 0, null);
-    g.dispose();
-    return bufferedImage;
+    return image.getSource();
   }
 
   public static Image filter(Image image, ImageFilter filter) {
     if (image == null || filter == null) return image;
     return Toolkit.getDefaultToolkit().createImage(
-      new FilteredImageSource(toBufferedImage(image).getSource(), filter));
+      new FilteredImageSource(getSource(image), filter));
   }
 }
