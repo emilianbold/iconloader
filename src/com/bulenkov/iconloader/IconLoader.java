@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @SuppressWarnings("UnusedDeclaration")
 public final class IconLoader {
-  public static boolean STRICT = false;
   private static boolean USE_DARK_ICONS = UIUtil.isUnderDarcula();
 
   private static final ImageIcon EMPTY_ICON = new ImageIcon(UIUtil.createImage(1, 1, BufferedImage.TYPE_3BYTE_BGR)) {
@@ -83,16 +82,10 @@ public final class IconLoader {
    */
   @Nullable
   public static Icon findIcon(@NotNull final String path, @NotNull final Class aClass) {
-    return findIcon(path, aClass, STRICT);
-  }
-
-  @Nullable
-  public static Icon findIcon(@NotNull String path, @NotNull final Class aClass, boolean strict) {
     String originalPath = path;
 
     URL myURL = aClass.getResource(path);
     if (myURL == null) {
-      if (strict) throw new RuntimeException("Can't find icon in '" + path + "' near " + aClass);
       return null;
     }
     final Icon icon = findIcon(myURL);
