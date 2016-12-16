@@ -24,9 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageFilter;
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -104,10 +101,6 @@ public final class IconLoader {
       return null;
     }
     final Icon icon = findIcon(myURL);
-    if (icon instanceof CachedImageIcon) {
-      ((CachedImageIcon)icon).myOriginalPath = originalPath;
-      ((CachedImageIcon)icon).myClassLoader = aClass.getClassLoader();
-    }
     return icon;
   }
 
@@ -116,9 +109,8 @@ public final class IconLoader {
     if (url == null) {
       return null;
     }
-    CachedImageIcon icon;
-      icon = new CachedImageIcon(url);
-    return icon;
+    Image image = ImageLoader.loadFromUrl(url, true);
+    return checkIcon(image, url);
   }
 
   @Nullable
@@ -128,10 +120,6 @@ public final class IconLoader {
 
     final URL url = classLoader.getResource(path.substring(1));
     final Icon icon = findIcon(url);
-    if (icon instanceof CachedImageIcon) {
-      ((CachedImageIcon)icon).myOriginalPath = originalPath;
-      ((CachedImageIcon)icon).myClassLoader = classLoader;
-    }
     return icon;
   }
 
@@ -211,94 +199,6 @@ public final class IconLoader {
         g2.setComposite(saveComposite);
       }
     };
-  }
-
-  /**
-   * Gets a snapshot of the icon, immune to changes made by these calls:
-   * {@link IconLoader#setUseDarkIcons(boolean)}
-   *
-   * @param icon the source icon
-   * @return the icon snapshot
-   */
-  @NotNull
-  public static Icon getIconSnapshot(@NotNull Icon icon) {
-    if (icon instanceof CachedImageIcon) {
-      return ((CachedImageIcon)icon).getRealIcon();
-    }
-    return icon;
-  }
-
-  public static final class CachedImageIcon implements Icon {
-    private volatile Object myRealIcon;
-    public String myOriginalPath;
-    private ClassLoader myClassLoader;
-    @NotNull
-    private URL myUrl;
-    private volatile boolean dark;
-    private volatile int numberOfPatchers = 0;
-
-    private volatile ImageFilter filter;
-
-    public CachedImageIcon(@NotNull URL url) {
-      myUrl = url;
-      dark = USE_DARK_ICONS;
-    }
-
-    @NotNull
-    private synchronized ImageIcon getRealIcon() {
-      if (!isValid()) {
-        myRealIcon = null;
-        dark = USE_DARK_ICONS;
-      }
-      Object realIcon = myRealIcon;
-      if (realIcon instanceof Icon) return (ImageIcon)realIcon;
-
-      ImageIcon icon;
-      if (realIcon instanceof Reference) {
-        icon = ((Reference<ImageIcon>)realIcon).get();
-        if (icon != null) return (ImageIcon)icon;
-      }
-
-      Image image = ImageLoader.loadFromUrl(myUrl, true, filter);
-      icon = checkIcon(image, myUrl);
-
-      if (icon != null) {
-        if (icon.getIconWidth() < 50 && icon.getIconHeight() < 50) {
-          realIcon = icon;
-        }
-        else {
-          realIcon = new SoftReference<ImageIcon>(icon);
-        }
-        myRealIcon = realIcon;
-      }
-
-      return icon == null ? EMPTY_ICON : icon;
-    }
-
-    private boolean isValid() {
-      return dark == USE_DARK_ICONS;
-    }
-
-    @Override
-    public void paintIcon(Component c, Graphics g, int x, int y) {
-      getRealIcon().paintIcon(c, g, x, y);
-    }
-
-    @Override
-    public int getIconWidth() {
-      return getRealIcon().getIconWidth();
-    }
-
-    @Override
-    public int getIconHeight() {
-      return getRealIcon().getIconHeight();
-    }
-
-    @Override
-    public String toString() {
-      return myUrl.toString();
-    }
-
   }
 
   private static class LabelHolder {
