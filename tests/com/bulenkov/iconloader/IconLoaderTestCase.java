@@ -44,7 +44,7 @@ public abstract class IconLoaderTestCase extends TestCase {
   }
 
   public static void setDarkIcons(boolean dark) throws Exception {
-    IconLoader.setUseDarkIcons(dark);
+    //TODO: set dark icons flag
   }
 
   public void checkIcon(String path, boolean isRetina, boolean isDark, String expectedName) throws Exception {

@@ -35,7 +35,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @SuppressWarnings("UnusedDeclaration")
 public final class IconLoader {
-  private static boolean USE_DARK_ICONS = UIUtil.isUnderDarcula();
 
   private static final ImageIcon EMPTY_ICON = new ImageIcon(UIUtil.createImage(1, 1, BufferedImage.TYPE_3BYTE_BGR)) {
     @NonNls
@@ -48,10 +47,6 @@ public final class IconLoader {
   public static final Component ourComponent = new Component() {};
 
   private IconLoader() { }
-
-  public static void setUseDarkIcons(boolean useDarkIcons) {
-    USE_DARK_ICONS = useDarkIcons;
-  }
 
   /**
    * This method is for test purposes only
