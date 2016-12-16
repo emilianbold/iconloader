@@ -28,7 +28,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Konstantin Bulenkov
@@ -43,17 +42,9 @@ public final class IconLoader {
     }
   };
 
-  private static AtomicBoolean ourIsSaveRealIconPath = new AtomicBoolean(false);
   public static final Component ourComponent = new Component() {};
 
   private IconLoader() { }
-
-  /**
-   * This method is for test purposes only
-   */
-  static void enableSaveRealIconPath() {
-    ourIsSaveRealIconPath.set(true);
-  }
 
   /**
    * Might return null if icon was not found.

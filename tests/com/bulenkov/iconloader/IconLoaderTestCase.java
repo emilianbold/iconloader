@@ -27,9 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Konstantin Bulenkov
  */
 public abstract class IconLoaderTestCase extends TestCase {
-  static {
-    IconLoader.enableSaveRealIconPath();
-  }
 
   public static void setRetina(boolean isRetina) throws Exception {
     if (isRetina == UIUtil.isRetina()) {
