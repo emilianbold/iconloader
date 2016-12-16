@@ -227,11 +227,6 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(@NotNull URL url, boolean allowFloatScaling, ImageFilter filter) {
-    // We can't check all 3rd party plugins and convince the authors to add @2x icons.
-    // (scaleFactor > 1.0) != isRetina() => we should scale images manually.
-    // Note we never scale images on Retina displays because scaling is handled by the system.
-    final boolean scaleImages = false;
-
     // For any scale factor > 1.0, always prefer retina images, because downscaling
     // retina images provides a better result than upscaling non-retina images.
     final boolean loadRetinaImages = UIUtil.isRetina();
@@ -239,33 +234,7 @@ public class ImageLoader implements Serializable {
     return ImageDescList.create(url.toString(), null, UIUtil.isUnderDarcula(), loadRetinaImages, allowFloatScaling).load(
       ImageConverterChain.create().
         withFilter(filter).
-        withRetina().
-        with(new ImageConverter() {
-              public Image convert(Image source, ImageDesc desc) {
-                if (source != null && scaleImages /*&& desc.type != ImageDesc.Type.SVG*/) {
-                  if (desc.path.contains("@2x"))
-                    return scaleImage(source, 1.0f / 2.0f);  // divide by 2.0 as Retina images are 2x the resolution.
-                  else
-                    return scaleImage(source, 1.0f);
-                }
-                return source;
-              }
-        }));
-  }
-
-  @NotNull
-  private static Image scaleImage(Image image, float scale) {
-    int w = image.getWidth(null);
-    int h = image.getHeight(null);
-    if (w <= 0 || h <= 0) {
-      return image;
-    }
-    int width = (int)(scale * w);
-    int height = (int)(scale * h);
-    // Using "QUALITY" instead of "ULTRA_QUALITY" results in images that are less blurry
-    // because ultra quality performs a few more passes when scaling, which introduces blurriness
-    // when the scaling factor is relatively small (i.e. <= 3.0f) -- which is the case here.
-    return Scalr.resize(ImageUtil.toBufferedImage(image), Scalr.Method.QUALITY, width, height);
+        withRetina());
   }
 
   @Nullable
