@@ -1,9 +1,4 @@
-[IconLoader][1]
+jRetina
 ==========
 
-Smart Java Icon Loader with support of HiDPI (Retina) images.
-
-See [Features List][1] here
-----
-
-[1]:http://bulenkov.com/iconloader
+Simple Java Icon Loader for macOS Retina

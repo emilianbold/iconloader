@@ -73,10 +73,6 @@
   
   <!-- Project Libraries -->
   
-  <path id="library.eawtstub.classpath">
-    <pathelement location="${basedir}/lib/eawtstub.jar"/>
-  </path>
-  
   <!-- Modules -->
   
   
@@ -96,23 +92,19 @@
   </path>
   
   <path id="iconloader.module.production.classpath">
-    <path refid="library.eawtstub.classpath"/>
   </path>
   
   <path id="iconloader.runtime.production.module.classpath">
     <pathelement location="${iconloader.output.dir}"/>
-    <path refid="library.eawtstub.classpath"/>
   </path>
   
   <path id="iconloader.module.classpath">
     <pathelement location="${iconloader.output.dir}"/>
-    <path refid="library.eawtstub.classpath"/>
   </path>
   
   <path id="iconloader.runtime.module.classpath">
     <pathelement location="${iconloader.testoutput.dir}"/>
     <pathelement location="${iconloader.output.dir}"/>
-    <path refid="library.eawtstub.classpath"/>
   </path>
   
   
