@@ -128,8 +128,7 @@ public class ImageLoader implements Serializable {
     public static ImageDescList create(@NotNull String file,
                                        @Nullable Class cls,
                                        boolean dark,
-                                       boolean retina,
-                                       boolean allowFloatScaling)
+                                       boolean retina)
     {
       ImageDescList vars = new ImageDescList();
       if (retina || dark) {
@@ -217,21 +216,16 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(@NotNull URL url) {
-    return loadFromUrl(url, true);
+    return loadFromUrl(url, null);
   }
 
   @Nullable
-  public static Image loadFromUrl(@NotNull URL url, boolean allowFloatScaling) {
-    return loadFromUrl(url, allowFloatScaling, null);
-  }
-
-  @Nullable
-  public static Image loadFromUrl(@NotNull URL url, boolean allowFloatScaling, ImageFilter filter) {
+  public static Image loadFromUrl(@NotNull URL url, ImageFilter filter) {
     // For any scale factor > 1.0, always prefer retina images, because downscaling
     // retina images provides a better result than upscaling non-retina images.
     final boolean loadRetinaImages = UIUtil.isRetina();
 
-    return ImageDescList.create(url.toString(), null, UIUtil.isUnderDarcula(), loadRetinaImages, allowFloatScaling).load(
+    return ImageDescList.create(url.toString(), null, UIUtil.isUnderDarcula(), loadRetinaImages).load(
       ImageConverterChain.create().
         withFilter(filter).
         withRetina());
@@ -244,13 +238,13 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(URL url, boolean dark, boolean retina, ImageFilter filter) {
-    return ImageDescList.create(url.toString(), null, dark, retina, true).
+    return ImageDescList.create(url.toString(), null, dark, retina).
       load(ImageConverterChain.create().withFilter(filter).withRetina());
   }
 
   @Nullable
   public static Image loadFromResource(@NonNls @NotNull String path, @NotNull Class aClass) {
-    return ImageDescList.create(path, aClass, UIUtil.isUnderDarcula(), UIUtil.isRetina(), true).
+    return ImageDescList.create(path, aClass, UIUtil.isUnderDarcula(), UIUtil.isRetina()).
       load(ImageConverterChain.create().withRetina());
   }
 
