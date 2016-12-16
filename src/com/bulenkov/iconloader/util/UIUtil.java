@@ -53,8 +53,11 @@ public class UIUtil {
     }
   }
 
+  private static boolean isMac() {
+    return System.getProperty("os.name").toLowerCase().startsWith("mac");
+  }
 
-  private static AtomicBoolean ourRetina = SystemInfo.isMac ? null : new AtomicBoolean(false);
+  private static AtomicBoolean ourRetina = isMac() ? null : new AtomicBoolean(false);
 
   public static synchronized  boolean isRetina() {
       if (ourRetina == null) {
