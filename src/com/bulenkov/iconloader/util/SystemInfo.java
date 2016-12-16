@@ -73,12 +73,12 @@ public class SystemInfo {
 
   private static boolean isOracleJvm() {
     final String vendor = getJavaVmVendor();
-    return vendor != null && StringUtil.containsIgnoreCase(vendor, "Oracle");
+    return vendor != null && vendor.toLowerCase().contains("oracle");
   }
 
   private static boolean isAppleJvm() {
     final String vendor = getJavaVmVendor();
-    return vendor != null && StringUtil.containsIgnoreCase(vendor, "Apple");
+    return vendor != null && vendor.toLowerCase().contains("apple");
   }
 
   public static String getJavaVmVendor() {

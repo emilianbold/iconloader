@@ -21,78 +21,6 @@ package com.bulenkov.iconloader.util;
  */
 public class StringUtil {
 
-  public static int indexOfIgnoreCase(String where, String what, int fromIndex) {
-    int targetCount = what.length();
-    int sourceCount = where.length();
-
-    if (fromIndex >= sourceCount) {
-      return targetCount == 0 ? sourceCount : -1;
-    }
-
-    if (fromIndex < 0) {
-      fromIndex = 0;
-    }
-
-    if (targetCount == 0) {
-      return fromIndex;
-    }
-
-    char first = what.charAt(0);
-    int max = sourceCount - targetCount;
-
-    for (int i = fromIndex; i <= max; i++) {
-      /* Look for first character. */
-      if (!charsEqualIgnoreCase(where.charAt(i), first)) {
-        while (++i <= max && !charsEqualIgnoreCase(where.charAt(i), first)) ;
-      }
-
-      /* Found first character, now look at the rest of v2 */
-      if (i <= max) {
-        int j = i + 1;
-        int end = j + targetCount - 1;
-        for (int k = 1; j < end && charsEqualIgnoreCase(where.charAt(j), what.charAt(k)); j++, k++) ;
-
-        if (j == end) {
-          /* Found whole string. */
-          return i;
-        }
-      }
-    }
-
-    return -1;
-  }
-
-
-  public static boolean containsIgnoreCase(String where, String what) {
-    return indexOfIgnoreCase(where, what, 0) >= 0;
-  }
-
-  public static boolean charsEqualIgnoreCase(char a, char b) {
-    return a == b || toUpperCase(a) == toUpperCase(b) || toLowerCase(a) == toLowerCase(b);
-  }
-
-  public static char toUpperCase(char a) {
-    if (a < 'a') {
-      return a;
-    }
-    if (a <= 'z') {
-      return (char) (a + ('A' - 'a'));
-    }
-    return Character.toUpperCase(a);
-  }
-
-  public static char toLowerCase(char a) {
-    if (a < 'A' || a >= 'a' && a <= 'z') {
-      return a;
-    }
-
-    if (a <= 'Z') {
-      return (char) (a + ('a' - 'A'));
-    }
-
-    return Character.toLowerCase(a);
-  }
-
   public static int compareVersionNumbers(String v1, String v2) {
     if (v1 == null && v2 == null) {
       return 0;
@@ -143,10 +71,6 @@ public class StringUtil {
 
   public static boolean startsWithChar(CharSequence s, char prefix) {
     return s != null && s.length() != 0 && s.charAt(0) == prefix;
-  }
-
-  public static boolean endsWithChar(CharSequence s, char suffix) {
-    return s != null && s.length() != 0 && s.charAt(s.length() - 1) == suffix;
   }
 
 }
