@@ -248,22 +248,21 @@ public class ImageLoader implements Serializable {
       load(ImageConverterChain.create().withRetina());
   }
 
-  public static Image loadFromStream(@NotNull final InputStream inputStream) {
+  public static Image loadFromStream(@NotNull final InputStream inputStream) throws IOException {
     return loadFromStream(inputStream, 1);
   }
 
-  public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale) {
+  public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale) throws IOException {
     return loadFromStream(inputStream, scale, null);
   }
 
-  public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale, ImageFilter filter) {
+  public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale, ImageFilter filter) throws IOException {
     Image image = load(inputStream);
     ImageDesc desc = new ImageDesc("", null, scale, ImageDesc.Type.UNDEFINED);
     return ImageConverterChain.create().withFilter(filter).withRetina().convert(image, desc);
   }
 
-  private static Image load(@NotNull final InputStream inputStream) {
-    try {
+  private static Image load(@NotNull final InputStream inputStream) throws IOException {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       try {
         byte[] buffer = new byte[1024];
@@ -282,12 +281,6 @@ public class ImageLoader implements Serializable {
       waitForImage(image);
 
       return image;
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
-
-    return null;
   }
 
   @NotNull
