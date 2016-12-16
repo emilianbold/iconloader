@@ -51,8 +51,8 @@ public class ImageLoader implements Serializable {
 
       UNDEFINED;
 
-      public Image load(URL url, InputStream stream, float scale) throws IOException {
-        return ImageLoader.load(stream, (int)scale);
+      public Image load(InputStream stream) throws IOException {
+        return ImageLoader.load(stream);
       }
     }
 
@@ -92,7 +92,7 @@ public class ImageLoader implements Serializable {
         }
         stream = connection.getInputStream();
       }
-      Image image = type.load(url, stream, scale);
+      Image image = type.load(stream);
       return image;
     }
 
@@ -257,13 +257,12 @@ public class ImageLoader implements Serializable {
   }
 
   public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale, ImageFilter filter) {
-    Image image = load(inputStream, scale);
+    Image image = load(inputStream);
     ImageDesc desc = new ImageDesc("", null, scale, ImageDesc.Type.UNDEFINED);
     return ImageConverterChain.create().withFilter(filter).withRetina().convert(image, desc);
   }
 
-  private static Image load(@NotNull final InputStream inputStream, final int scale) {
-    if (scale <= 0) throw new IllegalArgumentException("Scale must be 1 or greater");
+  private static Image load(@NotNull final InputStream inputStream) {
     try {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       try {
