@@ -17,7 +17,6 @@
 package com.bulenkov.iconloader;
 
 import com.bulenkov.iconloader.util.SystemInfo;
-import com.bulenkov.iconloader.util.UIUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -82,7 +81,4 @@ public class RetinaImage {
     }
   }
 
-  public static boolean isAppleHiDPIScaledImage(Image image) {
-    return UIUtil.isAppleRetina() && AppleHiDPIScaledImage.is(image);
-  }
 }

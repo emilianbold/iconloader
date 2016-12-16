@@ -22,53 +22,13 @@ package com.bulenkov.iconloader.util;
 @SuppressWarnings({"HardCodedStringLiteral", "UtilityClassWithoutPrivateConstructor", "UnusedDeclaration"})
 public class SystemInfo {
   public static final String OS_NAME = System.getProperty("os.name");
-  public static final String OS_VERSION = System.getProperty("os.version").toLowerCase();
-  public static final String JAVA_VERSION = System.getProperty("java.version");
   public static final String JAVA_RUNTIME_VERSION = System.getProperty("java.runtime.version");
 
   protected static final String _OS_NAME = OS_NAME.toLowerCase();
-  public static final boolean isWindows = _OS_NAME.startsWith("windows");
-  public static final boolean isOS2 = _OS_NAME.startsWith("os/2") || _OS_NAME.startsWith("os2");
   public static final boolean isMac = _OS_NAME.startsWith("mac");
-  public static final boolean isLinux = _OS_NAME.startsWith("linux");
-  public static final boolean isUnix = !isWindows && !isOS2;
-
-  public static final boolean isFileSystemCaseSensitive = isUnix && !isMac;
-  public static final boolean isMacOSLion = isLion();
 
   public static final boolean isAppleJvm = isAppleJvm();
   public static final boolean isOracleJvm = isOracleJvm();
-  public static final boolean isSunJvm = isSunJvm();
-  public static final boolean isJetbrainsJvm = isJetbrainsJvm();
-
-  public static boolean isOsVersionAtLeast(String version) {
-    return compareVersionNumbers(OS_VERSION, version) >= 0;
-  }
-
-
-  private static boolean isTiger() {
-    return isMac &&
-        !OS_VERSION.startsWith("10.0") &&
-        !OS_VERSION.startsWith("10.1") &&
-        !OS_VERSION.startsWith("10.2") &&
-        !OS_VERSION.startsWith("10.3");
-  }
-
-  private static boolean isLeopard() {
-    return isMac && isTiger() && !OS_VERSION.startsWith("10.4");
-  }
-
-  private static boolean isSnowLeopard() {
-    return isMac && isLeopard() && !OS_VERSION.startsWith("10.5");
-  }
-
-  private static boolean isLion() {
-    return isMac && isSnowLeopard() && !OS_VERSION.startsWith("10.6");
-  }
-
-  private static boolean isMountainLion() {
-    return isMac && isLion() && !OS_VERSION.startsWith("10.7");
-  }
 
   public static int compareVersionNumbers(String v1, String v2) {
     if (v1 == null && v2 == null) {
@@ -116,11 +76,6 @@ public class SystemInfo {
     return vendor != null && StringUtil.containsIgnoreCase(vendor, "Oracle");
   }
 
-  private static boolean isSunJvm() {
-    final String vendor = getJavaVmVendor();
-    return vendor != null && StringUtil.containsIgnoreCase(vendor, "Sun") && StringUtil.containsIgnoreCase(vendor, "Microsystems");
-  }
-
   private static boolean isAppleJvm() {
     final String vendor = getJavaVmVendor();
     return vendor != null && StringUtil.containsIgnoreCase(vendor, "Apple");
@@ -130,8 +85,4 @@ public class SystemInfo {
     return System.getProperty("java.vm.vendor");
   }
 
-  private static boolean isJetbrainsJvm() {
-    final String vendor = System.getProperty("java.vendor");
-    return vendor != null && StringUtil.containsIgnoreCase(vendor, "jetbrains");
-  }
 }

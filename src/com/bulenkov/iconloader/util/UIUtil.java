@@ -16,7 +16,6 @@
 
 package com.bulenkov.iconloader.util;
 
-import com.bulenkov.iconloader.IsRetina;
 import com.bulenkov.iconloader.JBHiDPIScaledImage;
 import com.bulenkov.iconloader.RetinaImage;
 
@@ -33,9 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UIUtil {
   public static final Color TRANSPARENT_COLOR = new Color(0, 0, 0, 0);
 
-  public static boolean isAppleRetina() {
-    return isRetina() && SystemInfo.isAppleJvm;
-  }
 
   public static boolean isUnderDarcula() {
     return UIManager.getLookAndFeel().getName().equals("Darcula");
@@ -65,12 +61,7 @@ public class UIUtil {
         ourRetina = new AtomicBoolean();
         ourRetina.set(false); // in case HiDPIScaledImage.drawIntoImage is not called for some reason
 
-        if (SystemInfo.isJavaVersionAtLeast("1.6.0_33") && SystemInfo.isAppleJvm) {
-          if (!"false".equals(System.getProperty("ide.mac.retina"))) {
-            ourRetina.set(IsRetina.isRetina());
-            return ourRetina.get();
-          }
-        } else if (SystemInfo.isJavaVersionAtLeast("1.7.0_40") && SystemInfo.isOracleJvm) {
+        if (SystemInfo.isJavaVersionAtLeast("1.7.0_40") && SystemInfo.isOracleJvm) {
           GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
           final GraphicsDevice device = env.getDefaultScreenDevice();
           try {
