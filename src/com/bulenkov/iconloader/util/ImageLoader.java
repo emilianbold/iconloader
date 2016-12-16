@@ -39,38 +39,20 @@ public class ImageLoader implements Serializable {
 //  private static final Log LOG = Logger.getLogger("#com.intellij.util.ImageLoader");
 
   private static class ImageDesc {
-    public enum Type {
-      PNG,
-
-//      SVG {
-//        @Override
-//        public Image load(URL url, InputStream is, float scale) throws IOException {
-//          return SVGLoader.load(url, is, scale);
-//        }
-//      },
-
-      UNDEFINED;
-
-      public Image load(InputStream stream) throws IOException {
-        return ImageLoader.load(stream);
-      }
-    }
 
     public final String path;
     public final @Nullable Class cls; // resource class if present
     public final float scale; // initial scale factor
-    public final Type type;
     public final boolean original; // path is not altered
 
-    public ImageDesc(String path, Class cls, float scale, Type type) {
-      this(path, cls, scale, type, false);
+    public ImageDesc(String path, Class cls, float scale) {
+      this(path, cls, scale, false);
     }
 
-    public ImageDesc(String path, Class cls, float scale, Type type, boolean original) {
+    public ImageDesc(String path, Class cls, float scale, boolean original) {
       this.path = path;
       this.cls = cls;
       this.scale = scale;
-      this.type = type;
       this.original = original;
     }
 
@@ -92,13 +74,13 @@ public class ImageLoader implements Serializable {
         }
         stream = connection.getInputStream();
       }
-      Image image = type.load(stream);
+      Image image = ImageLoader.load(stream);
       return image;
     }
 
     @Override
     public String toString() {
-      return path + ", scale: " + scale + ", type: " + type;
+      return path + ", scale: " + scale;
     }
   }
 
@@ -136,18 +118,18 @@ public class ImageLoader implements Serializable {
         final String ext = getExtension(file);
 
         if (dark && retina) {
-          vars.add(new ImageDesc(name + "@2x_dark." + ext, cls, 2f, ImageDesc.Type.PNG));
+          vars.add(new ImageDesc(name + "@2x_dark." + ext, cls, 2f));
         }
 
         if (dark) {
-          vars.add(new ImageDesc(name + "_dark." + ext, cls, 1f, ImageDesc.Type.PNG));
+          vars.add(new ImageDesc(name + "_dark." + ext, cls, 1f));
         }
 
         if (retina) {
-          vars.add(new ImageDesc(name + "@2x." + ext, cls, 2f, ImageDesc.Type.PNG));
+          vars.add(new ImageDesc(name + "@2x." + ext, cls, 2f));
         }
       }
-      vars.add(new ImageDesc(file, cls, 1f, ImageDesc.Type.PNG, true));
+      vars.add(new ImageDesc(file, cls, 1f, true));
       return vars;
     }
   }
@@ -258,7 +240,7 @@ public class ImageLoader implements Serializable {
 
   public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale, ImageFilter filter) throws IOException {
     Image image = load(inputStream);
-    ImageDesc desc = new ImageDesc("", null, scale, ImageDesc.Type.UNDEFINED);
+    ImageDesc desc = new ImageDesc("", null, scale);
     return ImageConverterChain.create().withFilter(filter).withRetina().convert(image, desc);
   }
 
