@@ -83,16 +83,11 @@ public final class IconLoader {
    */
   @Nullable
   public static Icon findIcon(@NotNull final String path, @NotNull final Class aClass) {
-    return findIcon(path, aClass, false);
+    return findIcon(path, aClass, STRICT);
   }
 
   @Nullable
-  public static Icon findIcon(@NotNull String path, @NotNull final Class aClass, boolean computeNow) {
-    return findIcon(path, aClass, computeNow, STRICT);
-  }
-
-  @Nullable
-  public static Icon findIcon(@NotNull String path, @NotNull final Class aClass, boolean computeNow, boolean strict) {
+  public static Icon findIcon(@NotNull String path, @NotNull final Class aClass, boolean strict) {
     String originalPath = path;
 
     URL myURL = aClass.getResource(path);
