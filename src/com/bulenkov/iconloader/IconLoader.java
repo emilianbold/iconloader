@@ -20,7 +20,6 @@ import com.bulenkov.iconloader.util.ImageLoader;
 import com.bulenkov.iconloader.util.ImageUtil;
 import com.bulenkov.iconloader.util.JBImageIcon;
 import com.bulenkov.iconloader.util.UIUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +33,6 @@ import java.net.URL;
  */
 @SuppressWarnings("UnusedDeclaration")
 public final class IconLoader {
-
-  private static final ImageIcon EMPTY_ICON = new ImageIcon(UIUtil.createImage(1, 1, BufferedImage.TYPE_3BYTE_BGR)) {
-    @NonNls
-    public String toString() {
-      return "Empty icon " + super.toString();
-    }
-  };
 
   public static final Component ourComponent = new Component() {};
 
@@ -70,12 +62,12 @@ public final class IconLoader {
       return null;
     }
 
-    final Icon icon = new JBImageIcon(image);
-    if (icon != null && !isGoodSize(icon)) {
-      return EMPTY_ICON;
+    final ImageIcon icon = new JBImageIcon(image);
+    if (!isGoodSize(icon)) {
+      return null;
     }
 
-    return (ImageIcon)icon;
+    return icon;
   }
 
   public static boolean isGoodSize(@NotNull final Icon icon) {
@@ -85,7 +77,7 @@ public final class IconLoader {
   /**
    * Gets (creates if necessary) disabled icon based on the passed one.
    *
-   * @return <code>ImageIcon</code> constructed from disabled image of passed icon.
+   * @return <code>ImageIcon</code> constructed from disabled image of passed icon, null if source icon is wrong
    */
   @Nullable
   public static Icon getDisabledIcon(Icon icon) {
@@ -93,7 +85,7 @@ public final class IconLoader {
 
     Icon disabledIcon;
       if (!isGoodSize(icon)) {
-        return EMPTY_ICON;
+        return null;
       }
       final int scale = UIUtil.isRetina() ? 2 : 1;
       @SuppressWarnings("UndesirableClassUsage")

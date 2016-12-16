@@ -17,11 +17,9 @@
 package com.bulenkov.iconloader.util;
 
 import com.bulenkov.iconloader.JBHiDPIScaledImage;
-import com.bulenkov.iconloader.RetinaImage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -83,15 +81,6 @@ public class UIUtil {
 
       return ourRetina.get();
   }
-
-  public static BufferedImage createImage(int width, int height, int type) {
-    if (isRetina()) {
-      return RetinaImage.create(width, height, type);
-    }
-    //noinspection UndesirableClassUsage
-    return new BufferedImage(width, height, type);
-  }
-
 
   private static final GrayFilter DEFAULT_GRAY_FILTER = new GrayFilter(true, 65);
   private static final GrayFilter DARCULA_GRAY_FILTER = new GrayFilter(true, 30);

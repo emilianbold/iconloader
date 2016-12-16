@@ -56,11 +56,6 @@ public class RetinaImage {
     return hidpi;
   }
 
-  public static BufferedImage create(final int width, int height, int type) {
-    return create(null, width, height, type);
-  }
-
-
   private static BufferedImage create(Image image, final int width, int height, int type) {
       if (image == null) {
         return new JBHiDPIScaledImage(width, height, type);
