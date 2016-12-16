@@ -175,34 +175,6 @@ public final class IconLoader {
     return new IconWrapper(disabledIcon);
   }
 
-  public static Icon getTransparentIcon(@NotNull final Icon icon) {
-    return getTransparentIcon(icon, 0.5f);
-  }
-
-  public static Icon getTransparentIcon(@NotNull final Icon icon, final float alpha) {
-    return new Icon() {
-
-      @Override
-      public int getIconHeight() {
-        return icon.getIconHeight();
-      }
-
-      @Override
-      public int getIconWidth() {
-        return icon.getIconWidth();
-      }
-
-      @Override
-      public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
-        final Graphics2D g2 = (Graphics2D)g;
-        final Composite saveComposite = g2.getComposite();
-        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, alpha));
-        icon.paintIcon(c, g2, x, y);
-        g2.setComposite(saveComposite);
-      }
-    };
-  }
-
   private static class LabelHolder {
     /**
      * To get disabled icon with paint it into the image. Some icons require
