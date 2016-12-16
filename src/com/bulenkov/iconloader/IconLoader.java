@@ -34,8 +34,6 @@ import java.net.URL;
 @SuppressWarnings("UnusedDeclaration")
 public final class IconLoader {
 
-  public static final Component ourComponent = new Component() {};
-
   private IconLoader() { }
 
   /**
@@ -58,7 +56,7 @@ public final class IconLoader {
 
   @Nullable
   private static ImageIcon checkIcon(final Image image, @NotNull URL url) {
-    if (image == null || image.getHeight(LabelHolder.ourFakeComponent) < 1) { // image wasn't loaded or broken
+    if (image == null || image.getHeight(ImageLoader.ourComponent) < 1) { // image wasn't loaded or broken
       return null;
     }
 
@@ -95,7 +93,7 @@ public final class IconLoader {
       graphics.setColor(UIUtil.TRANSPARENT_COLOR);
       graphics.fillRect(0, 0, icon.getIconWidth(), icon.getIconHeight());
       graphics.scale(scale, scale);
-      icon.paintIcon(LabelHolder.ourFakeComponent, graphics, 0, 0);
+      icon.paintIcon(ImageLoader.ourComponent, graphics, 0, 0);
 
       graphics.dispose();
 
@@ -106,11 +104,4 @@ public final class IconLoader {
     return new IconWrapper(disabledIcon);
   }
 
-  private static class LabelHolder {
-    /**
-     * To get disabled icon with paint it into the image. Some icons require
-     * not null component to paint.
-     */
-    private static final JComponent ourFakeComponent = new JLabel();
-  }
 }

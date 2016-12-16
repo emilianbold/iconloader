@@ -16,6 +16,8 @@
 
 package com.bulenkov.iconloader;
 
+import com.bulenkov.iconloader.util.ImageLoader;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -34,7 +36,7 @@ public class RetinaImage {
    * @return the Retina-aware wrapper
    */
   public static Image createFrom(Image image) {
-    return createFrom(image, 2, IconLoader.ourComponent);
+    return createFrom(image, 2, ImageLoader.ourComponent);
   }
 
   /**
