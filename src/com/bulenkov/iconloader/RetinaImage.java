@@ -36,7 +36,7 @@ public class RetinaImage {
    * @return the Retina-aware wrapper
    */
   public static Image createFrom(Image image) {
-    return createFrom(image, 2, ImageLoader.ourComponent);
+    return createFrom(image, ImageLoader.ourComponent);
   }
 
   /**
@@ -45,11 +45,11 @@ public class RetinaImage {
    * The wrapper will represent the raw image in the user coordinate space.
    *
    * @param image the raw image
-   * @param scale the raw image scale
    * @param observer the raw image observer
    * @return the Retina-aware wrapper
    */
-  public static Image createFrom(Image image, final int scale, ImageObserver observer) {
+  public static Image createFrom(Image image, ImageObserver observer) {
+    int scale = 2;
     int w = image.getWidth(observer);
     int h = image.getHeight(observer);
 

@@ -40,16 +40,16 @@ public class ImageLoader implements Serializable {
   private static class ImageDesc {
 
     public final String path;
-    public final float scale; // initial scale factor
+    public final boolean retina;
     public final boolean original; // path is not altered
 
-    public ImageDesc(String path, float scale) {
-      this(path, scale, false);
+    public ImageDesc(String path, boolean retina) {
+      this(path, retina, false);
     }
 
-    public ImageDesc(String path, float scale, boolean original) {
+    public ImageDesc(String path, boolean retina, boolean original) {
       this.path = path;
-      this.scale = scale;
+      this.retina = retina;
       this.original = original;
     }
 
@@ -70,7 +70,7 @@ public class ImageLoader implements Serializable {
 
     @Override
     public String toString() {
-      return path + ", scale: " + scale;
+      return path + ", retina: " + retina;
     }
   }
 
@@ -106,10 +106,10 @@ public class ImageLoader implements Serializable {
         final String ext = getExtension(file);
 
         if (retina) {
-          vars.add(new ImageDesc(name + "@2x." + ext, 2f));
+          vars.add(new ImageDesc(name + "@2x." + ext, true));
         }
       }
-      vars.add(new ImageDesc(file, 1f, true));
+      vars.add(new ImageDesc(file, false, true));
       return vars;
     }
   }
@@ -138,8 +138,8 @@ public class ImageLoader implements Serializable {
       return with(new ImageConverter() {
         @Override
         public Image convert(Image source, ImageDesc desc) {
-          if (source != null && UIUtil.isRetina() && desc.scale > 1) {
-            return RetinaImage.createFrom(source, (int)desc.scale, ourComponent);
+          if (source != null && UIUtil.isRetina() && desc.retina) {
+            return RetinaImage.createFrom(source, ourComponent);
           }
           return source;
         }
@@ -178,17 +178,7 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(@NotNull URL url) {
-    return loadFromUrl(url, null);
-  }
-
-  @Nullable
-  public static Image loadFromUrl(@NotNull URL url, ImageFilter filter) {
-    return loadFromUrl(url, UIUtil.isRetina(), filter);
-  }
-
-  @Nullable
-  public static Image loadFromUrl(URL url, boolean retina) {
-    return loadFromUrl(url, retina, null);
+    return loadFromUrl(url, UIUtil.isRetina(), null);
   }
 
   @Nullable
@@ -198,16 +188,16 @@ public class ImageLoader implements Serializable {
   }
 
   public static Image loadFromStream(@NotNull final InputStream inputStream) throws IOException {
-    return loadFromStream(inputStream, 1);
+    return loadFromStream(inputStream, false);
   }
 
-  public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale) throws IOException {
-    return loadFromStream(inputStream, scale, null);
+  public static Image loadFromStream(@NotNull final InputStream inputStream, final boolean retina) throws IOException {
+    return loadFromStream(inputStream, retina, null);
   }
 
-  public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale, ImageFilter filter) throws IOException {
+  public static Image loadFromStream(@NotNull final InputStream inputStream, final boolean retina, ImageFilter filter) throws IOException {
     Image image = load(inputStream);
-    ImageDesc desc = new ImageDesc("", scale);
+    ImageDesc desc = new ImageDesc("", retina);
     return ImageConverterChain.create().withFilter(filter).withRetina().convert(image, desc);
   }
 
