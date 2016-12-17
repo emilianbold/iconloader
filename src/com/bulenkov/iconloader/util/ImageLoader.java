@@ -187,17 +187,9 @@ public class ImageLoader implements Serializable {
       load(ImageConverterChain.create().withFilter(filter).withRetina());
   }
 
-  public static Image loadFromStream(@NotNull final InputStream inputStream) throws IOException {
-    return loadFromStream(inputStream, false);
-  }
-
-  public static Image loadFromStream(@NotNull final InputStream inputStream, final boolean retina) throws IOException {
-    return loadFromStream(inputStream, retina, null);
-  }
-
-  public static Image loadFromStream(@NotNull final InputStream inputStream, final boolean retina, ImageFilter filter) throws IOException {
+  public static Image loadFromStream(@NotNull final InputStream inputStream, ImageFilter filter) throws IOException {
     Image image = load(inputStream);
-    ImageDesc desc = new ImageDesc("", retina);
+    ImageDesc desc = new ImageDesc("", true);
     return ImageConverterChain.create().withFilter(filter).withRetina().convert(image, desc);
   }
 
