@@ -34,22 +34,14 @@ public class RetinaImage {
    * @param observer the raw image observer
    * @return the Retina-aware wrapper
    */
-  public static Image createFrom(Image image, ImageObserver observer) {
+  public static Image createFrom(/* @NotNull */ Image image, ImageObserver observer) {
     int scale = 2;
     int w = image.getWidth(observer);
     int h = image.getHeight(observer);
 
-    Image hidpi = create(image, w / scale, h / scale, BufferedImage.TYPE_INT_ARGB);
+    Image hidpi = new JBHiDPIScaledImage(image, w / scale, h / scale, BufferedImage.TYPE_INT_ARGB);
 
     return hidpi;
-  }
-
-  private static BufferedImage create(Image image, final int width, int height, int type) {
-      if (image == null) {
-        return new JBHiDPIScaledImage(width, height, type);
-      } else {
-        return new JBHiDPIScaledImage(image, width, height, type);
-      }
   }
 
 }
