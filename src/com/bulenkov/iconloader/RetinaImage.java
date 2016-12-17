@@ -16,8 +16,6 @@
 
 package com.bulenkov.iconloader;
 
-import com.bulenkov.iconloader.util.ImageLoader;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -30,18 +28,6 @@ public class RetinaImage {
   /**
    * Creates a Retina-aware wrapper over a raw image.
    * The raw image should be provided in scale of the Retina default scale factor (2x).
-   * The wrapper will represent the raw image in the user coordinate space.
-   *
-   * @param image the raw image
-   * @return the Retina-aware wrapper
-   */
-  public static Image createFrom(Image image) {
-    return createFrom(image, ImageLoader.ourComponent);
-  }
-
-  /**
-   * Creates a Retina-aware wrapper over a raw image.
-   * The raw image should be provided in the specified scale.
    * The wrapper will represent the raw image in the user coordinate space.
    *
    * @param image the raw image

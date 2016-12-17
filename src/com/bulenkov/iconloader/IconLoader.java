@@ -98,7 +98,7 @@ public final class IconLoader {
       graphics.dispose();
 
       Image img = ImageUtil.filter(image, UIUtil.getGrayFilter());
-      if (UIUtil.isRetina()) img = RetinaImage.createFrom(img);
+      if (UIUtil.isRetina()) img = RetinaImage.createFrom(img, ImageLoader.ourComponent);
 
       disabledIcon = new JBImageIcon(img);
     return new IconWrapper(disabledIcon);
