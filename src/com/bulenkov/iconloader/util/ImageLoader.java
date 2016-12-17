@@ -183,14 +183,7 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(@NotNull URL url, ImageFilter filter) {
-    // For any scale factor > 1.0, always prefer retina images, because downscaling
-    // retina images provides a better result than upscaling non-retina images.
-    final boolean loadRetinaImages = UIUtil.isRetina();
-
-    return ImageDescList.create(url.toString(), loadRetinaImages).load(
-      ImageConverterChain.create().
-        withFilter(filter).
-        withRetina());
+    return loadFromUrl(url, UIUtil.isRetina(), filter);
   }
 
   @Nullable
