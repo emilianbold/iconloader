@@ -189,8 +189,13 @@ public class ImageLoader implements Serializable {
 
   public static Image loadFromStream(@NotNull final InputStream inputStream, ImageFilter filter) throws IOException {
     Image image = load(inputStream);
-    ImageDesc desc = new ImageDesc("", true);
-    return ImageConverterChain.create().withFilter(filter).withRetina().convert(image, desc);
+    if(filter != null) {
+      image = ImageUtil.filter(image, filter);
+    }
+    if (image != null && UIUtil.isRetina()) {
+      image = RetinaImage.createFrom(image, ourComponent);
+    }
+    return image;
   }
 
   private static Image load(@NotNull final InputStream inputStream) throws IOException {
