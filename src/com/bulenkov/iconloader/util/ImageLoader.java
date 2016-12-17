@@ -52,9 +52,10 @@ public class ImageLoader implements Serializable {
       this.retina = retina;
       this.original = original;
     }
+  }
 
     @Nullable
-    public Image load() throws IOException {
+    public  static InputStream urlStream(String path, boolean original) throws IOException {
       InputStream stream = null;
       URL url = null;
         url = new URL(path);
@@ -64,28 +65,7 @@ public class ImageLoader implements Serializable {
           connection.addRequestProperty("User-Agent", "IntelliJ");
         }
         stream = connection.getInputStream();
-      Image image = ImageLoader.load(stream);
-      return image;
-    }
-
-    @Override
-    public String toString() {
-      return path + ", retina: " + retina;
-    }
-  }
-
-    public static java.util.List<ImageDesc> createImageDescList(@NotNull String file,
-                                                   boolean retina)
-    {
-      java.util.List<ImageDesc> vars = new ArrayList<ImageDesc>();
-      if (retina) {
-        final String name = getNameWithoutExtension(file);
-        final String ext = getExtension(file);
-
-          vars.add(new ImageDesc(name + "@2x." + ext, true));
-      }
-      vars.add(new ImageDesc(file, false, true));
-      return vars;
+      return stream;
     }
 
   public static final Component ourComponent = new Component() {
@@ -112,9 +92,15 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(URL url, boolean retina, ImageFilter filter) {
-    for (ImageDesc desc : createImageDescList(url.toString(), retina)) {
+    String file = url.toString();
+    java.util.List<ImageDesc> vars = new ArrayList<ImageDesc>();
+    if (retina) {
+      vars.add(new ImageDesc(getRetina2XName(file), true));
+    }
+    vars.add(new ImageDesc(file, false, true));
+    for (ImageDesc desc : vars) {
       try {
-        Image image = desc.load();
+        Image image = load(urlStream(desc.path, desc.original));
         if (image == null) continue;
 //          LOG.debug("Loaded image: " + desc);
 
@@ -161,6 +147,13 @@ public class ImageLoader implements Serializable {
       waitForImage(image);
 
       return image;
+  }
+
+  public static String getRetina2XName(String file) {
+    final String name = getNameWithoutExtension(file);
+    final String ext = getExtension(file);
+
+    return name + "@2x." + ext;
   }
 
   @NotNull
