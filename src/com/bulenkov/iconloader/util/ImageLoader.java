@@ -79,17 +79,20 @@ public class ImageLoader implements Serializable {
 
     Image image = null;
 
-    try {
-      if (retina) {
+    if (retina) {
+      try {
         image = load(urlStream(getRetina2XName(file), false));
         imageIsRetina = true;
+      } catch (IOException ignore) {
       }
+    }
 
-      if (image == null) {
+    if (image == null) {
+      try {
         image = load(urlStream(file, true));
         imageIsRetina = false;
+      } catch (IOException ioe) {
       }
-    } catch (IOException ioe) {
     }
 
     if (image != null) {
