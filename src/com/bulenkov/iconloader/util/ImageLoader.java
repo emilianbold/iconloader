@@ -74,90 +74,19 @@ public class ImageLoader implements Serializable {
     }
   }
 
-  private static class ImageDescList extends ArrayList<ImageDesc> {
-    private ImageDescList() {}
-
-    @Nullable
-    public Image load() {
-      return load(ImageConverterChain.create());
-    }
-
-    @Nullable
-    public Image load(@NotNull ImageConverterChain converters) {
-      for (ImageDesc desc : this) {
-        try {
-          Image image = desc.load();
-          if (image == null) continue;
-//          LOG.debug("Loaded image: " + desc);
-          return converters.convert(image, desc);
-        }
-        catch (IOException ignore) {
-        }
-      }
-      return null;
-    }
-
-    public static ImageDescList create(@NotNull String file,
-                                       boolean retina)
+    public static java.util.List<ImageDesc> createImageDescList(@NotNull String file,
+                                                   boolean retina)
     {
-      ImageDescList vars = new ImageDescList();
+      java.util.List<ImageDesc> vars = new ArrayList<ImageDesc>();
       if (retina) {
         final String name = getNameWithoutExtension(file);
         final String ext = getExtension(file);
 
-        if (retina) {
           vars.add(new ImageDesc(name + "@2x." + ext, true));
-        }
       }
       vars.add(new ImageDesc(file, false, true));
       return vars;
     }
-  }
-
-  private interface ImageConverter {
-    Image convert(@Nullable Image source, ImageDesc desc);
-  }
-
-  private static class ImageConverterChain extends ArrayList<ImageConverter> {
-    private ImageConverterChain() {}
-
-    public static ImageConverterChain create() {
-      return new ImageConverterChain();
-    }
-
-    public ImageConverterChain withFilter(final ImageFilter filter) {
-      return with(new ImageConverter() {
-        @Override
-        public Image convert(Image source, ImageDesc desc) {
-          return ImageUtil.filter(source, filter);
-        }
-      });
-    }
-
-    public ImageConverterChain withRetina() {
-      return with(new ImageConverter() {
-        @Override
-        public Image convert(Image source, ImageDesc desc) {
-          if (source != null && UIUtil.isRetina() && desc.retina) {
-            return RetinaImage.createFrom(source, ourComponent);
-          }
-          return source;
-        }
-      });
-    }
-
-    public ImageConverterChain with(ImageConverter f) {
-      add(f);
-      return this;
-    }
-
-    public Image convert(Image image, ImageDesc desc) {
-      for (ImageConverter f : this) {
-        image = f.convert(image, desc);
-      }
-      return image;
-    }
-  }
 
   public static final Component ourComponent = new Component() {
   };
@@ -183,8 +112,23 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(URL url, boolean retina, ImageFilter filter) {
-    return ImageDescList.create(url.toString(), retina).
-      load(ImageConverterChain.create().withFilter(filter).withRetina());
+    for (ImageDesc desc : createImageDescList(url.toString(), retina)) {
+      try {
+        Image image = desc.load();
+        if (image == null) continue;
+//          LOG.debug("Loaded image: " + desc);
+
+        if (filter != null) {
+          image = ImageUtil.filter(image, filter);
+        }
+        if (image != null && UIUtil.isRetina() && desc.retina) {
+          image = RetinaImage.createFrom(image, ourComponent);
+        }
+        return image;
+      } catch (IOException ignore) {
+      }
+    }
+    return null;
   }
 
   public static Image loadFromStream(@NotNull final InputStream inputStream, ImageFilter filter) throws IOException {
