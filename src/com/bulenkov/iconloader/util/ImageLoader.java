@@ -29,30 +29,11 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 
 /**
  * @author Konstantin Bulenkov
  */
 public class ImageLoader implements Serializable {
-//  private static final Log LOG = Logger.getLogger("#com.intellij.util.ImageLoader");
-
-  private static class ImageDesc {
-
-    public final String path;
-    public final boolean retina;
-    public final boolean original; // path is not altered
-
-    public ImageDesc(String path, boolean retina) {
-      this(path, retina, false);
-    }
-
-    public ImageDesc(String path, boolean retina, boolean original) {
-      this.path = path;
-      this.retina = retina;
-      this.original = original;
-    }
-  }
 
     @Nullable
     public  static InputStream urlStream(String path, boolean original) throws IOException {
@@ -93,26 +74,32 @@ public class ImageLoader implements Serializable {
   @Nullable
   public static Image loadFromUrl(URL url, boolean retina, ImageFilter filter) {
     String file = url.toString();
-    java.util.List<ImageDesc> vars = new ArrayList<ImageDesc>();
-    if (retina) {
-      vars.add(new ImageDesc(getRetina2XName(file), true));
-    }
-    vars.add(new ImageDesc(file, false, true));
-    for (ImageDesc desc : vars) {
-      try {
-        Image image = load(urlStream(desc.path, desc.original));
-        if (image == null) continue;
-//          LOG.debug("Loaded image: " + desc);
 
+    boolean imageIsRetina = false;
+
+    Image image = null;
+
+    try {
+      if (retina) {
+        image = load(urlStream(getRetina2XName(file), false));
+        imageIsRetina = true;
+      }
+
+      if (image == null) {
+        image = load(urlStream(file, true));
+        imageIsRetina = false;
+      }
+    } catch (IOException ioe) {
+    }
+
+    if (image != null) {
         if (filter != null) {
           image = ImageUtil.filter(image, filter);
         }
-        if (image != null && UIUtil.isRetina() && desc.retina) {
+        if (image != null && UIUtil.isRetina() && imageIsRetina) {
           image = RetinaImage.createFrom(image, ourComponent);
         }
         return image;
-      } catch (IOException ignore) {
-      }
     }
     return null;
   }
