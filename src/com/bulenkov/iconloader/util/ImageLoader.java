@@ -17,7 +17,6 @@
 package com.bulenkov.iconloader.util;
 
 import com.bulenkov.iconloader.RetinaImage;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,17 +40,15 @@ public class ImageLoader implements Serializable {
   private static class ImageDesc {
 
     public final String path;
-    public final @Nullable Class cls; // resource class if present
     public final float scale; // initial scale factor
     public final boolean original; // path is not altered
 
-    public ImageDesc(String path, Class cls, float scale) {
-      this(path, cls, scale, false);
+    public ImageDesc(String path, float scale) {
+      this(path, scale, false);
     }
 
-    public ImageDesc(String path, Class cls, float scale, boolean original) {
+    public ImageDesc(String path, float scale, boolean original) {
       this.path = path;
-      this.cls = cls;
       this.scale = scale;
       this.original = original;
     }
@@ -60,12 +57,6 @@ public class ImageLoader implements Serializable {
     public Image load() throws IOException {
       InputStream stream = null;
       URL url = null;
-      if (cls != null) {
-        //noinspection IOResourceOpenedButNotSafelyClosed
-        stream = cls.getResourceAsStream(path);
-        if (stream == null) return null;
-      }
-      if (stream == null) {
         url = new URL(path);
         URLConnection connection = url.openConnection();
         if (connection instanceof HttpURLConnection) {
@@ -73,7 +64,6 @@ public class ImageLoader implements Serializable {
           connection.addRequestProperty("User-Agent", "IntelliJ");
         }
         stream = connection.getInputStream();
-      }
       Image image = ImageLoader.load(stream);
       return image;
     }
@@ -108,7 +98,6 @@ public class ImageLoader implements Serializable {
     }
 
     public static ImageDescList create(@NotNull String file,
-                                       @Nullable Class cls,
                                        boolean retina)
     {
       ImageDescList vars = new ImageDescList();
@@ -117,10 +106,10 @@ public class ImageLoader implements Serializable {
         final String ext = getExtension(file);
 
         if (retina) {
-          vars.add(new ImageDesc(name + "@2x." + ext, cls, 2f));
+          vars.add(new ImageDesc(name + "@2x." + ext, 2f));
         }
       }
-      vars.add(new ImageDesc(file, cls, 1f, true));
+      vars.add(new ImageDesc(file, 1f, true));
       return vars;
     }
   }
@@ -198,7 +187,7 @@ public class ImageLoader implements Serializable {
     // retina images provides a better result than upscaling non-retina images.
     final boolean loadRetinaImages = UIUtil.isRetina();
 
-    return ImageDescList.create(url.toString(), null, loadRetinaImages).load(
+    return ImageDescList.create(url.toString(), loadRetinaImages).load(
       ImageConverterChain.create().
         withFilter(filter).
         withRetina());
@@ -211,14 +200,8 @@ public class ImageLoader implements Serializable {
 
   @Nullable
   public static Image loadFromUrl(URL url, boolean retina, ImageFilter filter) {
-    return ImageDescList.create(url.toString(), null, retina).
+    return ImageDescList.create(url.toString(), retina).
       load(ImageConverterChain.create().withFilter(filter).withRetina());
-  }
-
-  @Nullable
-  public static Image loadFromResource(@NonNls @NotNull String path, @NotNull Class aClass) {
-    return ImageDescList.create(path, aClass, UIUtil.isRetina()).
-      load(ImageConverterChain.create().withRetina());
   }
 
   public static Image loadFromStream(@NotNull final InputStream inputStream) throws IOException {
@@ -231,7 +214,7 @@ public class ImageLoader implements Serializable {
 
   public static Image loadFromStream(@NotNull final InputStream inputStream, final int scale, ImageFilter filter) throws IOException {
     Image image = load(inputStream);
-    ImageDesc desc = new ImageDesc("", null, scale);
+    ImageDesc desc = new ImageDesc("", scale);
     return ImageConverterChain.create().withFilter(filter).withRetina().convert(image, desc);
   }
 
