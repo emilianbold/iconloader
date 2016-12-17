@@ -40,13 +40,8 @@ public abstract class IconLoaderTestCase extends TestCase {
     ref.set(isRetina);
   }
 
-  public static void setDarkIcons(boolean dark) throws Exception {
-    //TODO: set dark icons flag
-  }
-
-  public void checkIcon(String path, boolean isRetina, boolean isDark, String expectedName) throws Exception {
+  public void checkIcon(String path, boolean isRetina, String expectedName) throws Exception {
     setRetina(isRetina);
-    setDarkIcons(isDark);
     final Icon icon = IconLoader.getIcon(getClass().getResource(path));
     assert icon != null : "Can't find icon '" + path + "'";
     icon.getIconHeight();

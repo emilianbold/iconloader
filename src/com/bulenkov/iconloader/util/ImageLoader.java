@@ -109,21 +109,12 @@ public class ImageLoader implements Serializable {
 
     public static ImageDescList create(@NotNull String file,
                                        @Nullable Class cls,
-                                       boolean dark,
                                        boolean retina)
     {
       ImageDescList vars = new ImageDescList();
-      if (retina || dark) {
+      if (retina) {
         final String name = getNameWithoutExtension(file);
         final String ext = getExtension(file);
-
-        if (dark && retina) {
-          vars.add(new ImageDesc(name + "@2x_dark." + ext, cls, 2f));
-        }
-
-        if (dark) {
-          vars.add(new ImageDesc(name + "_dark." + ext, cls, 1f));
-        }
 
         if (retina) {
           vars.add(new ImageDesc(name + "@2x." + ext, cls, 2f));
@@ -207,26 +198,26 @@ public class ImageLoader implements Serializable {
     // retina images provides a better result than upscaling non-retina images.
     final boolean loadRetinaImages = UIUtil.isRetina();
 
-    return ImageDescList.create(url.toString(), null, UIUtil.isUnderDarcula(), loadRetinaImages).load(
+    return ImageDescList.create(url.toString(), null, loadRetinaImages).load(
       ImageConverterChain.create().
         withFilter(filter).
         withRetina());
   }
 
   @Nullable
-  public static Image loadFromUrl(URL url, boolean dark, boolean retina) {
-    return loadFromUrl(url, dark, retina, null);
+  public static Image loadFromUrl(URL url, boolean retina) {
+    return loadFromUrl(url, retina, null);
   }
 
   @Nullable
-  public static Image loadFromUrl(URL url, boolean dark, boolean retina, ImageFilter filter) {
-    return ImageDescList.create(url.toString(), null, dark, retina).
+  public static Image loadFromUrl(URL url, boolean retina, ImageFilter filter) {
+    return ImageDescList.create(url.toString(), null, retina).
       load(ImageConverterChain.create().withFilter(filter).withRetina());
   }
 
   @Nullable
   public static Image loadFromResource(@NonNls @NotNull String path, @NotNull Class aClass) {
-    return ImageDescList.create(path, aClass, UIUtil.isUnderDarcula(), UIUtil.isRetina()).
+    return ImageDescList.create(path, aClass, UIUtil.isRetina()).
       load(ImageConverterChain.create().withRetina());
   }
 

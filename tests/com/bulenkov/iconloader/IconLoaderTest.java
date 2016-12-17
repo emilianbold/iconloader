@@ -21,32 +21,15 @@ package com.bulenkov.iconloader;
  */
 public class IconLoaderTest extends IconLoaderTestCase {
   public void testSimple() throws Exception {
-    checkIcon("/icons/print.png", false, false, "print.png");
+    checkIcon("/icons/print.png", false, "print.png");
   }
 
   public void testSimpleRetina() throws Exception {
-    checkIcon("/icons/print.png", true, false, "print@2x.png");
-  }
-
-  public void testSimpleDark() throws Exception {
-    checkIcon("/icons/print.png", false, true, "print_dark.png");
-  }
-
-  public void testSimpleRetinaAndDark() throws Exception {
-    checkIcon("/icons/print.png", true, true, "print@2x_dark.png");
+    checkIcon("/icons/print.png", true, "print@2x.png");
   }
 
   public void testNoRetinaIconAvailable() throws Exception {
-    checkIcon("/icons/printPreview.png", true, false, "printPreview.png");
+    checkIcon("/icons/printPreview.png", true, "printPreview.png");
   }
-
-  public void testNoDarkIconAvailable() throws Exception {
-    checkIcon("/icons/printPreview.png", false, true, "printPreview.png");
-  }
-
-  public void testNoRetinaAndDarkIconAvailable() throws Exception {
-    checkIcon("/icons/printPreview.png", true, true, "printPreview.png");
-  }
-
 
 }
